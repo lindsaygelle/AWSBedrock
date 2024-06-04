@@ -1,0 +1,54 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for more information:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://containers.dev/guide/dependabot
+
+version: 2
+updates:
+  - package-ecosystem: "devcontainers"
+    assignees:
+      - "lindsaygelle"
+    directory: "/"
+    labels:
+      - "dependabot"
+      - "devcontainers"
+    open-pull-requests-limit: 0
+    reviewers:
+      - "lindsaygelle"
+    schedule:
+      day: "monday"
+      interval: "weekly"
+      time: "09:00"
+      timezone: "Australia/Sydney"
+
+  - package-ecosystem: "github-actions"
+    assignees:
+      - "lindsaygelle"
+    directory: "/"
+    labels:
+      - "dependabot"
+      - "github-actions"
+    open-pull-requests-limit: 0
+    reviewers:
+      - "lindsaygelle"
+    schedule:
+      day: "monday"
+      interval: "weekly"
+      time: "09:00"
+      timezone: "Australia/Sydney"
+
+  - package-ecosystem: "pip"
+    assignees:
+      - "lindsaygelle"
+    directory: "/"
+    labels:
+      - "dependabot"
+      - "pip"
+    open-pull-requests-limit: 0
+    reviewers:
+      - "lindsaygelle"
+    schedule:
+      interval: "weekly"
+      time: "09:00"
+      timezone: "Australia/Sydney"
