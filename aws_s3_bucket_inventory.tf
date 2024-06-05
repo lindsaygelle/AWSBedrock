@@ -10,7 +10,7 @@ resource "aws_s3_bucket_inventory" "cloudtrail" {
   }
   enabled                  = true
   included_object_versions = "All"
-  name                     = "Weekly"
+  name                     = "WEEKLY"
   schedule {
     frequency = "Weekly"
   }
@@ -28,7 +28,7 @@ resource "aws_s3_bucket_inventory" "log" {
   }
   enabled                  = true
   included_object_versions = "All"
-  name                     = "Weekly"
+  name                     = "WEEKLY"
   schedule {
     frequency = "Weekly"
   }

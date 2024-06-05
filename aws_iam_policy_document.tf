@@ -33,8 +33,12 @@ data "aws_iam_policy_document" "s3_bucket_log" {
   statement {
     actions = ["s3:PutObject"]
     condition {
-      test     = "ArnLike"
-      values   = ["${aws_s3_bucket.main.arn}"]
+      test = "ArnLike"
+      values = [
+        "${aws_s3_bucket.cloudtrail.arn}",
+        "${aws_s3_bucket.inventory.arn}",
+        "${aws_s3_bucket.main.arn}"
+      ]
       variable = "aws:SourceArn"
     }
     condition {
