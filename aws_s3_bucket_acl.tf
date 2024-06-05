@@ -4,6 +4,12 @@ resource "aws_s3_bucket_acl" "cloudtrail" {
   expected_bucket_owner = data.aws_caller_identity.main.account_id
 }
 
+resource "aws_s3_bucket_acl" "inventory" {
+  acl                   = "private"
+  bucket                = aws_s3_bucket_ownership_controls.inventory.bucket
+  expected_bucket_owner = data.aws_caller_identity.main.account_id
+}
+
 resource "aws_s3_bucket_acl" "log" {
   acl                   = "private"
   bucket                = aws_s3_bucket_ownership_controls.log.bucket
