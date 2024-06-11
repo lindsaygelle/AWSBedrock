@@ -1,6 +1,11 @@
 resource "aws_s3_bucket_policy" "cloudtrail" {
-  bucket = aws_s3_bucket.cloudtrail.bucket
+  bucket = aws_s3_bucket_acl.cloudtrail.bucket
   policy = data.aws_iam_policy_document.s3_bucket_cloudtrail.json
+}
+
+resource "aws_s3_bucket_policy" "inventory" {
+  bucket = aws_s3_bucket_acl.inventory.bucket
+  policy = data.aws_iam_policy_document.s3_bucket_inventory.json
 }
 
 resource "aws_s3_bucket_policy" "log" {
