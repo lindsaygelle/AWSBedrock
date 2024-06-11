@@ -1,3 +1,36 @@
+data "aws_iam_policy_document" "assume_role_api_gateway" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+    principals {
+      identifiers = ["apigateway.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "api_gateway_rest_api" {
+  statement {
+    actions = [
+      "logs:CreateLogDelivery",
+      "logs:CreateLogGroup",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:DescribeResourcePolicies",
+      "logs:FilterLogEvents",
+      "logs:GetLogDelivery",
+      "logs:GetLogEvents",
+      "logs:ListLogDeliveries",
+      "logs:PutResourcePolicy",
+      "logs:UpdateLogDelivery"
+    ]
+    resources = [
+      "${aws_cloudwatch_log_group.api_gateway_rest_api.arn}/*"
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "s3_bucket_cloudtrail" {
   statement {
     actions = ["s3:GetBucketAcl"]
