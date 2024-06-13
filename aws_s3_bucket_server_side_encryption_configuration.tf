@@ -1,3 +1,12 @@
+resource "aws_s3_bucket_server_side_encryption_configuration" "analytics" {
+  bucket = aws_s3_bucket_acl.analytics.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "cloudtrail" {
   bucket = aws_s3_bucket_acl.cloudtrail.bucket
   rule {
