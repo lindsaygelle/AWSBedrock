@@ -1,3 +1,10 @@
+resource "aws_s3_bucket_versioning" "analytics" {
+  bucket = aws_s3_bucket_acl.analytics.bucket
+  versioning_configuration {
+    status = "Disabled"
+  }
+}
+
 resource "aws_s3_bucket_versioning" "cloudtrail" {
   bucket = aws_s3_bucket_acl.cloudtrail.bucket
   versioning_configuration {

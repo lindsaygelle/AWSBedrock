@@ -1,3 +1,7 @@
+resource "aws_s3_bucket_policy" "analytics" {
+  bucket = aws_s3_bucket_acl.analytics.bucket
+  policy = data.aws_iam_policy_document.s3_bucket_analytics.json
+}
 resource "aws_s3_bucket_policy" "cloudtrail" {
   bucket = aws_s3_bucket_acl.cloudtrail.bucket
   policy = data.aws_iam_policy_document.s3_bucket_cloudtrail.json

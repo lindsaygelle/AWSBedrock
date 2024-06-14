@@ -31,6 +31,33 @@ data "aws_iam_policy_document" "api_gateway_rest_api" {
   }
 }
 
+data "aws_iam_policy_document" "s3_bucket_analytics" {
+  statement {
+    actions = ["s3:PutObject"]
+    condition {
+      test = "StringEquals"
+      values = [
+        "${aws_s3_bucket.cloudtrail.arn}",
+        "${aws_s3_bucket.inventory.arn}",
+        "${aws_s3_bucket.log.arn}",
+        "${aws_s3_bucket.main.arn}",
+      ]
+      variable = "AWS:SourceArn"
+    }
+    condition {
+      test     = "StringEquals"
+      values   = ["bucket-owner-full-control"]
+      variable = "s3:x-amz-acl"
+    }
+    effect = "Allow"
+    principals {
+      identifiers = ["s3.amazonaws.com"]
+      type        = "Service"
+    }
+    resources = ["${aws_s3_bucket.analytics.arn}/*"]
+  }
+}
+
 data "aws_iam_policy_document" "s3_bucket_cloudtrail" {
   statement {
     actions = ["s3:GetBucketAcl"]
