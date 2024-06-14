@@ -5,7 +5,7 @@ resource "aws_s3_bucket_inventory" "analytics" {
       account_id = data.aws_caller_identity.main.account_id
       bucket_arn = aws_s3_bucket.inventory.arn
       format     = "CSV"
-      prefix     = aws_s3_bucket.analytics.bucket
+      prefix     = null
     }
   }
   enabled                  = true
@@ -23,7 +23,7 @@ resource "aws_s3_bucket_inventory" "cloudtrail" {
       account_id = data.aws_caller_identity.main.account_id
       bucket_arn = aws_s3_bucket.inventory.arn
       format     = "CSV"
-      prefix     = aws_s3_bucket.cloudtrail.bucket
+      prefix     = null
     }
   }
   enabled                  = true
@@ -41,7 +41,7 @@ resource "aws_s3_bucket_inventory" "log" {
       account_id = data.aws_caller_identity.main.account_id
       bucket_arn = aws_s3_bucket.inventory.arn
       format     = "CSV"
-      prefix     = aws_s3_bucket.log.bucket
+      prefix     = null
     }
   }
   enabled                  = true

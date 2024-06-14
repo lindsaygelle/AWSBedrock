@@ -100,6 +100,7 @@ data "aws_iam_policy_document" "s3_bucket_inventory" {
     condition {
       test = "ArnLike"
       values = [
+        "${aws_s3_bucket.analytics.arn}",
         "${aws_s3_bucket.cloudtrail.arn}",
         "${aws_s3_bucket.log.arn}",
         "${aws_s3_bucket.main.arn}"
@@ -131,6 +132,7 @@ data "aws_iam_policy_document" "s3_bucket_log" {
     condition {
       test = "ArnLike"
       values = [
+        "${aws_s3_bucket.analytics.arn}",
         "${aws_s3_bucket.cloudtrail.arn}",
         "${aws_s3_bucket.inventory.arn}",
         "${aws_s3_bucket.main.arn}"
