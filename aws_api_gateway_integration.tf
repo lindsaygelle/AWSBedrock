@@ -1,6 +1,19 @@
-resource "aws_api_gateway_integration" "model_get" {
-  http_method = aws_api_gateway_method.model_get.http_method
-  rest_api_id = aws_api_gateway_method.model_get.rest_api_id
-  resource_id = aws_api_gateway_method.model_get.resource_id
-  type        = "MOCK"
+resource "aws_api_gateway_integration" "text_post" {
+  credentials             = aws_iam_role.api_gateway_rest_api.arn
+  http_method             = aws_api_gateway_method.text_post.http_method
+  integration_http_method = "POST"
+  passthrough_behavior    = "NEVER"
+  request_templates = {
+    "application/json" = <<EOF
+#set($input = $input.json('$'))
+{
+   "input": "$util.escapeJavaScript($input).replaceAll("\\'", "'")",
+   "stateMachineArn": "${aws_sfn_state_machine.bedrock_text.arn}"
+}
+EOF
+  }
+  resource_id = aws_api_gateway_method.text_post.resource_id
+  rest_api_id = aws_api_gateway_method.text_post.rest_api_id
+  type        = "AWS"
+  uri         = "arn:aws:apigateway:${data.aws_region.main.name}:states:action/StartSyncExecution"
 }

@@ -9,6 +9,19 @@ data "aws_iam_policy_document" "assume_role_api_gateway" {
   }
 }
 
+data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_text" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
+    ]
+    effect = "Allow"
+    principals {
+      identifiers = ["states.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
 data "aws_iam_policy_document" "api_gateway_rest_api" {
   statement {
     actions = [
@@ -25,8 +38,18 @@ data "aws_iam_policy_document" "api_gateway_rest_api" {
       "logs:PutResourcePolicy",
       "logs:UpdateLogDelivery"
     ]
+    effect = "Allow"
     resources = [
       "${aws_cloudwatch_log_group.api_gateway_rest_api.arn}/*"
+    ]
+  }
+  statement {
+    actions = [
+      "states:StartSyncExecution"
+    ]
+    effect = "Allow"
+    resources = [
+      "${aws_sfn_state_machine.bedrock_text.arn}"
     ]
   }
 }
@@ -150,5 +173,41 @@ data "aws_iam_policy_document" "s3_bucket_log" {
       type        = "Service"
     }
     resources = ["${aws_s3_bucket.log.arn}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
+  statement {
+    actions   = ["bedrock:InvokeModel"]
+    effect    = "Allow"
+    resources = ["arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/*"]
+  }
+  statement {
+    actions = [
+      "cloudwatch:CreateLogDelivery",
+      "cloudwatch:DescribeLogGroups",
+      "cloudwatch:DescribeResourcePolicies",
+      "cloudwatch:GetLogDelivery",
+      "cloudwatch:DeleteLogDelivery",
+      "cloudwatch:ListLogDeliveries",
+      "cloudwatch:PutResourcePolicy",
+      "cloudwatch:UpdateLogDelivery",
+    ]
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    actions = [
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords",
+    ]
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
   }
 }
