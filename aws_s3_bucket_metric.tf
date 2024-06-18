@@ -17,3 +17,8 @@ resource "aws_s3_bucket_metric" "log" {
   bucket = aws_s3_bucket_acl.log.bucket
   name   = "ALL"
 }
+
+resource "aws_s3_bucket_metric" "main" {
+  bucket = aws_s3_bucket_acl.main.bucket
+  name   = "ALL"
+}
