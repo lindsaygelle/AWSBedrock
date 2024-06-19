@@ -7,7 +7,7 @@
             "Parameters": {
                 "ModelId": "arn:aws:bedrock:${aws_region}::foundation-model/amazon.titan-tg1-large",
                 "Body": {
-                    "inputText": "Write a 'Good morning' greeting to me in German.",
+                    "inputText.$": "$.body.inputText",
                     "textGenerationConfig": {
                         "temperature": 0,
                         "topP": 1,

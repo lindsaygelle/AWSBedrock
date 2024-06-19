@@ -2,13 +2,11 @@ resource "aws_sfn_state_machine" "bedrock_text" {
   definition = templatefile("./step_function/state_machine/BedrockInvokeModelText.json", {
     aws_region = data.aws_region.main.name
   })
-  /*
   logging_configuration {
     include_execution_data = true
     level                  = "ALL"
     log_destination        = "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_text.arn}:*"
   }
-  */
   name     = "${local.organization}-bedrock-text"
   publish  = false
   role_arn = aws_iam_role.sfn_state_machine_bedrock_text.arn
@@ -25,6 +23,9 @@ resource "aws_sfn_state_machine" "bedrock_text" {
     partition_reverse_dns_prefix = data.aws_partition.main.reverse_dns_prefix
     region                       = data.aws_region.main.name
     workspace                    = terraform.workspace
+  }
+  tracing_configuration {
+    enabled = true
   }
   type = "EXPRESS"
 }

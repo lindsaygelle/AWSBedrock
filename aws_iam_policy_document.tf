@@ -184,26 +184,28 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
   }
   statement {
     actions = [
-      "cloudwatch:CreateLogDelivery",
-      "cloudwatch:DescribeLogGroups",
-      "cloudwatch:DescribeResourcePolicies",
-      "cloudwatch:GetLogDelivery",
-      "cloudwatch:DeleteLogDelivery",
-      "cloudwatch:ListLogDeliveries",
-      "cloudwatch:PutResourcePolicy",
-      "cloudwatch:UpdateLogDelivery",
+      "logs:CreateLogDelivery",
+      "logs:CreateLogStream",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:DescribeResourcePolicies",
+      "logs:GetLogDelivery",
+      "logs:ListLogDeliveries",
+      "logs:PutLogEvents",
+      "logs:PutResourcePolicy",
+      "logs:UpdateLogDelivery",
     ]
     effect = "Allow"
     resources = [
-      "*"
+      "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_text.arn}",
     ]
   }
   statement {
     actions = [
       "xray:GetSamplingRules",
       "xray:GetSamplingTargets",
-      "xray:PutTraceSegments",
       "xray:PutTelemetryRecords",
+      "xray:PutTraceSegments",
     ]
     effect = "Allow"
     resources = [

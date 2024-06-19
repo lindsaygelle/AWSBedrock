@@ -4,7 +4,7 @@ resource "aws_api_gateway_integration" "text_post" {
   integration_http_method = "POST"
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
   request_templates = {
-    "application/json" = templatefile("./api_gateway/rest_api/bedrock/request_template/TextWrite.vtl", {
+    "application/json" = templatefile("./api_gateway/rest_api/bedrock/request_template/TextWriteRequest.vtl", {
       aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_text.arn
     })
   }
