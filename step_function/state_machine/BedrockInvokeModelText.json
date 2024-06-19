@@ -1,20 +1,381 @@
 {
-    "StartAt": "BedrockInvokeModel",
+    "StartAt": "ParallelCheck",
     "States": {
-        "BedrockInvokeModel": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::bedrock:invokeModel",
-            "Parameters": {
-                "ModelId": "arn:aws:bedrock:${aws_region}::foundation-model/amazon.titan-tg1-large",
-                "Body": {
-                    "inputText.$": "$.body.inputText",
-                    "textGenerationConfig": {
-                        "temperature": 0,
-                        "topP": 1,
-                        "maxTokenCount": 512
+        "ParallelCheck": {
+            "Type": "Parallel",
+            "Branches": [
+                {
+                    "StartAt": "CheckBody",
+                    "States": {
+                        "CheckBody": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.body",
+                                    "IsPresent": true,
+                                    "Next": "ParallelCheckBody"
+                                }
+                            ],
+                            "Default": "DefaultBody"
+                        },
+                        "ParallelCheckBody": {
+                            "Type": "Parallel",
+                            "Branches": [
+                                {
+                                    "StartAt": "CheckBodyInputText",
+                                    "States": {
+                                        "CheckBodyInputText": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$.inputText",
+                                                    "IsPresent": true,
+                                                    "Next": "PassBodyInputTextValue"
+                                                }
+                                            ],
+                                            "Default": "DefaultBodyInputTextValue"
+                                        },
+                                        "PassBodyInputTextValue": {
+                                            "Type": "Pass",
+                                            "End": true,
+                                            "InputPath": "$.inputText"
+                                        },
+                                        "DefaultBodyInputTextValue": {
+                                            "Type": "Pass",
+                                            "Next": "PassBodyInputTextValue",
+                                            "Parameters": {
+                                                "inputText": null
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckBodyTextGenerationConfig",
+                                    "States": {
+                                        "CheckBodyTextGenerationConfig": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$.textGenerationConfig",
+                                                    "IsPresent": true,
+                                                    "Next": "ParallelCheckBodyTextGenerationConfig"
+                                                }
+                                            ],
+                                            "Default": "DefaultBodyTextGenerationConfig"
+                                        },
+                                        "ParallelCheckBodyTextGenerationConfig": {
+                                            "Type": "Parallel",
+                                            "End": true,
+                                            "Branches": [
+                                                {
+                                                    "StartAt": "CheckBodyTextGenerationConfigMaxTokenCount",
+                                                    "States": {
+                                                        "CheckBodyTextGenerationConfigMaxTokenCount": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.maxTokenCount",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckBodyTextGenerationConfigMaxTokenCountValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigMaxTokenCount"
+                                                        },
+                                                        "CheckBodyTextGenerationConfigMaxTokenCountValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 512
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 3072
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassBodyTextGenerationConfigMaxTokenCountValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigMaxTokenCountValue",
+                                                            "InputPath": "$.maxTokenCount"
+                                                        },
+                                                        "PassBodyTextGenerationConfigMaxTokenCountValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigMaxTokenCountValue": {
+                                                            "Type": "Pass",
+                                                            "Parameters": 512,
+                                                            "End": true
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigMaxTokenCount": {
+                                                            "Type": "Pass",
+                                                            "Next": "CheckBodyTextGenerationConfigMaxTokenCountValue",
+                                                            "Parameters": {
+                                                                "maxTokenCount": null
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckBodyTextGenerationConfigStopSequences",
+                                                    "States": {
+                                                        "CheckBodyTextGenerationConfigStopSequences": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.stopSequences",
+                                                                    "IsPresent": true,
+                                                                    "Next": "MapBodyTextGenerationConfigStopSequences"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigStopSequences"
+                                                        },
+                                                        "MapBodyTextGenerationConfigStopSequences": {
+                                                            "Type": "Map",
+                                                            "ItemProcessor": {
+                                                                "ProcessorConfig": {
+                                                                    "Mode": "INLINE"
+                                                                },
+                                                                "StartAt": "CheckBodyTextGenerationConfigStopSequence",
+                                                                "States": {
+                                                                    "CheckBodyTextGenerationConfigStopSequence": {
+                                                                        "Type": "Choice",
+                                                                        "Choices": [
+                                                                            {
+                                                                                "Variable": "$",
+                                                                                "IsString": true,
+                                                                                "Next": "PassBodyTextGenerationConfigStopSequence"
+                                                                            }
+                                                                        ],
+                                                                        "Default": "DefaultBodyTextGenerationConfigStopSequence"
+                                                                    },
+                                                                    "PassBodyTextGenerationConfigStopSequence": {
+                                                                        "Type": "Pass",
+                                                                        "End": true
+                                                                    },
+                                                                    "DefaultBodyTextGenerationConfigStopSequence": {
+                                                                        "Type": "Pass",
+                                                                        "End": true,
+                                                                        "Parameters": null
+                                                                    }
+                                                                }
+                                                            },
+                                                            "End": true,
+                                                            "ItemsPath": "$.stopSequences"
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigStopSequences": {
+                                                            "Type": "Pass",
+                                                            "Parameters": {
+                                                                "stopSequences": []
+                                                            },
+                                                            "Next": "MapBodyTextGenerationConfigStopSequences"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckBodyTextGenerationConfigTemperature",
+                                                    "States": {
+                                                        "CheckBodyTextGenerationConfigTemperature": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.temperature",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckBodyTextGenerationConfigTemperatureValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigTemperature"
+                                                        },
+                                                        "CheckBodyTextGenerationConfigTemperatureValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 0
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 1
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassBodyTextGenerationConfigTemperatureValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigTemperatureValue",
+                                                            "InputPath": "$.temperature"
+                                                        },
+                                                        "PassBodyTextGenerationConfigTemperatureValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigTemperatureValue": {
+                                                            "Type": "Pass",
+                                                            "Parameters": 1,
+                                                            "End": true
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigTemperature": {
+                                                            "Type": "Pass",
+                                                            "Parameters": {
+                                                                "temperature": null
+                                                            },
+                                                            "Next": "CheckBodyTextGenerationConfigTemperatureValue"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckBodyTextGenerationConfigTopP",
+                                                    "States": {
+                                                        "CheckBodyTextGenerationConfigTopP": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.topP",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckBodyTextGenerationConfigTopPValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigTopP"
+                                                        },
+                                                        "CheckBodyTextGenerationConfigTopPValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 0
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 1
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassBodyTextGenerationConfigTopPValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultBodyTextGenerationConfigTopPValue"
+                                                        },
+                                                        "PassBodyTextGenerationConfigTopPValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigTopPValue": {
+                                                            "Type": "Pass",
+                                                            "End": true,
+                                                            "Parameters": 1
+                                                        },
+                                                        "DefaultBodyTextGenerationConfigTopP": {
+                                                            "Type": "Pass",
+                                                            "Parameters": {
+                                                                "topP": null
+                                                            },
+                                                            "Next": "CheckBodyTextGenerationConfigTopPValue"
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "InputPath": "$.textGenerationConfig",
+                                            "ResultSelector": {
+                                                "maxTokenCount.$": "$[0]",
+                                                "stopSequences.$": "$[1]",
+                                                "temperature.$": "$[2]",
+                                                "topP.$": "$[3]"
+                                            }
+                                        },
+                                        "DefaultBodyTextGenerationConfig": {
+                                            "Type": "Pass",
+                                            "Parameters": {
+                                                "textGenerationConfig": {}
+                                            },
+                                            "Next": "ParallelCheckBodyTextGenerationConfig"
+                                        }
+                                    }
+                                }
+                            ],
+                            "InputPath": "$.body",
+                            "ResultSelector": {
+                                "inputText.$": "$[0]",
+                                "textGenerationConfig.$": "$[1]"
+                            },
+                            "Next": "BedrockInvokeModel"
+                        },
+                        "BedrockInvokeModel": {
+                            "Type": "Task",
+                            "Resource": "arn:aws:states:::bedrock:invokeModel",
+                            "Parameters": {
+                                "ModelId": "arn:aws:bedrock:${aws_region}::foundation-model/amazon.titan-tg1-large",
+                                "Body": {
+                                    "inputText.$": "$.inputText",
+                                    "textGenerationConfig": {
+                                        "maxTokenCount.$": "$.textGenerationConfig.maxTokenCount",
+                                        "stopSequences.$": "$.textGenerationConfig.stopSequences",
+                                        "temperature.$": "$.textGenerationConfig.temperature",
+                                        "topP.$": "$.textGenerationConfig.topP"
+                                    }
+                                }
+                            },
+                            "Next": "Success"
+                        },
+                        "Success": {
+                            "Type": "Succeed"
+                        },
+                        "DefaultBody": {
+                            "Type": "Pass",
+                            "Next": "ParallelCheckBody",
+                            "Parameters": {
+                                "body": {}
+                            }
+                        }
                     }
                 }
-            },
+            ],
             "End": true
         }
     }
