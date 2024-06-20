@@ -6,6 +6,53 @@
             "type": [
                 "string"
             ]
+        },
+        "textGenerationConfig": {
+            "maxProperties": 4,
+            "minProperties": 0,
+            "properties": {
+                "maxTokenCount": {
+                    "maximum": 3072,
+                    "minimum": 512,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "stopSequences": {
+                    "items": {
+                        "minLength":  1,
+                        "type": [
+                            "string"
+                        ]
+                    },
+                    "minItems": 0,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "temperature": {
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "topP": {
+                    "maximum": 1.0,
+                    "minimum": 0,
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                }
+            },
+            "type": [
+                "null",
+                "object"
+            ]
         }
     },
     "required": [
