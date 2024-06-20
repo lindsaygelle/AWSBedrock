@@ -41,6 +41,11 @@ fmt format:
 	@ terraform fmt \
 		-recursive
 
+plan:
+	@ echo "Planning"
+	@ terraform plan
+	@ echo "Done!"
+
 requirements:
 	@ if [ -z "${VIRTUAL_ENV}" ]; then \
 		echo "Not inside a virtualenv."; \

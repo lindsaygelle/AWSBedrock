@@ -1026,7 +1026,23 @@
                     "textGenerationConfig.$": "$.body.textGenerationConfig"
                 }
             },
-            "Next": "Success"
+            "Next": "SNS Publish",
+            "ResultPath": "$.output"
+        },
+        "SNS Publish": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "Parameters": {
+                "TopicArn": "${sns_topic_arn}",
+                "Message.$": "$"
+            },
+            "Next": "Output",
+            "ResultPath": null
+        },
+        "Output": {
+            "Type": "Pass",
+            "Next": "Success",
+            "InputPath": "$.output"
         },
         "Success": {
             "Type": "Succeed"
