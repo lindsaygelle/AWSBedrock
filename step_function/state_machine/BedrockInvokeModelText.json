@@ -5,6 +5,118 @@
             "Type": "Parallel",
             "Branches": [
                 {
+                    "StartAt": "CheckAccountId",
+                    "States": {
+                        "CheckAccountId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.accountId",
+                                    "IsPresent": true,
+                                    "Next": "PassAccountId"
+                                }
+                            ],
+                            "Default": "DefaultAccountId"
+                        },
+                        "PassAccountId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.accountId "
+                        },
+                        "DefaultAccountId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "accountId": null
+                            },
+                            "Next": "PassAccountId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckApiId",
+                    "States": {
+                        "CheckApiId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.apiId",
+                                    "IsPresent": true,
+                                    "Next": "PassApiId"
+                                }
+                            ],
+                            "Default": "DefaultApiId"
+                        },
+                        "PassApiId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.apiId"
+                        },
+                        "DefaultApiId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "apiId": null
+                            },
+                            "Next": "PassApiId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckAuthorizer",
+                    "States": {
+                        "CheckAuthorizer": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.authorizer",
+                                    "IsPresent": true,
+                                    "Next": "PassAuthorizer"
+                                }
+                            ],
+                            "Default": "DefaultAuthorizer"
+                        },
+                        "PassAuthorizer": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.authorizer"
+                        },
+                        "DefaultAuthorizer": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Authorizer": null
+                            },
+                            "Next": "PassAuthorizer"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckAwsEndpointRequestId",
+                    "States": {
+                        "CheckAwsEndpointRequestId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.awsEndpointRequestId",
+                                    "IsPresent": true,
+                                    "Next": "PassAwsEndpointRequestId"
+                                }
+                            ],
+                            "Default": "DefaultAwsEndpointRequestId"
+                        },
+                        "PassAwsEndpointRequestId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.awsEndpointRequestId"
+                        },
+                        "DefaultAwsEndpointRequestId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "AwsEndpointRequestId": null
+                            },
+                            "Next": "PassAwsEndpointRequestId"
+                        }
+                    }
+                },
+                {
                     "StartAt": "CheckBody",
                     "States": {
                         "CheckBody": {
@@ -65,7 +177,6 @@
                                         },
                                         "ParallelCheckBodyTextGenerationConfig": {
                                             "Type": "Parallel",
-                                            "End": true,
                                             "Branches": [
                                                 {
                                                     "StartAt": "CheckBodyTextGenerationConfigMaxTokenCount",
@@ -159,8 +270,22 @@
                                                                         "Type": "Choice",
                                                                         "Choices": [
                                                                             {
-                                                                                "Variable": "$",
-                                                                                "IsString": true,
+                                                                                "And": [
+                                                                                    {
+                                                                                        "Not": {
+                                                                                            "Variable": "$",
+                                                                                            "IsNumeric": true
+                                                                                        }
+                                                                                    },
+                                                                                    {
+                                                                                        "And": [
+                                                                                            {
+                                                                                                "Variable": "$",
+                                                                                                "IsString": true
+                                                                                            }
+                                                                                        ]
+                                                                                    }
+                                                                                ],
                                                                                 "Next": "PassBodyTextGenerationConfigStopSequence"
                                                                             }
                                                                         ],
@@ -173,7 +298,10 @@
                                                                     "DefaultBodyTextGenerationConfigStopSequence": {
                                                                         "Type": "Pass",
                                                                         "End": true,
-                                                                        "Parameters": null
+                                                                        "Parameters": {
+                                                                            "value": null
+                                                                        },
+                                                                        "OutputPath": "$.value"
                                                                     }
                                                                 }
                                                             },
@@ -327,7 +455,8 @@
                                                 "stopSequences.$": "$[1]",
                                                 "temperature.$": "$[2]",
                                                 "topP.$": "$[3]"
-                                            }
+                                            },
+                                            "End": true
                                         },
                                         "DefaultBodyTextGenerationConfig": {
                                             "Type": "Pass",
@@ -344,27 +473,7 @@
                                 "inputText.$": "$[0]",
                                 "textGenerationConfig.$": "$[1]"
                             },
-                            "Next": "BedrockInvokeModel"
-                        },
-                        "BedrockInvokeModel": {
-                            "Type": "Task",
-                            "Resource": "arn:aws:states:::bedrock:invokeModel",
-                            "Parameters": {
-                                "ModelId": "arn:aws:bedrock:${aws_region}::foundation-model/amazon.titan-tg1-large",
-                                "Body": {
-                                    "inputText.$": "$.inputText",
-                                    "textGenerationConfig": {
-                                        "maxTokenCount.$": "$.textGenerationConfig.maxTokenCount",
-                                        "stopSequences.$": "$.textGenerationConfig.stopSequences",
-                                        "temperature.$": "$.textGenerationConfig.temperature",
-                                        "topP.$": "$.textGenerationConfig.topP"
-                                    }
-                                }
-                            },
-                            "Next": "Success"
-                        },
-                        "Success": {
-                            "Type": "Succeed"
+                            "End": true
                         },
                         "DefaultBody": {
                             "Type": "Pass",
@@ -374,9 +483,569 @@
                             }
                         }
                     }
+                },
+                {
+                    "StartAt": "CheckDeploymentId",
+                    "States": {
+                        "CheckDeploymentId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.deploymentId",
+                                    "IsPresent": true,
+                                    "Next": "PassDeploymentId"
+                                }
+                            ],
+                            "Default": "DefaultDeploymentId"
+                        },
+                        "PassDeploymentId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.deploymentId"
+                        },
+                        "DefaultDeploymentId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "DeploymentId": null
+                            },
+                            "Next": "PassDeploymentId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckDomainName",
+                    "States": {
+                        "CheckDomainName": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.domainName",
+                                    "IsPresent": true,
+                                    "Next": "PassDomainName"
+                                }
+                            ],
+                            "Default": "DefaultDomainName"
+                        },
+                        "PassDomainName": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.domainName"
+                        },
+                        "DefaultDomainName": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "DomainName": null
+                            },
+                            "Next": "PassDomainName"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckDomainPrefix",
+                    "States": {
+                        "CheckDomainPrefix": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.domainPrefix",
+                                    "IsPresent": true,
+                                    "Next": "PassDomainPrefix"
+                                }
+                            ],
+                            "Default": "DefaultDomainPrefix"
+                        },
+                        "PassDomainPrefix": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.domainPrefix"
+                        },
+                        "DefaultDomainPrefix": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "DomainPrefix": null
+                            },
+                            "Next": "PassDomainPrefix"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckExtendedRequestId",
+                    "States": {
+                        "CheckExtendedRequestId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.extendedRequestId",
+                                    "IsPresent": true,
+                                    "Next": "PassExtendedRequestId"
+                                }
+                            ],
+                            "Default": "DefaultExtendedRequestId"
+                        },
+                        "PassExtendedRequestId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.extendedRequestId"
+                        },
+                        "DefaultExtendedRequestId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "ExtendedRequestId": null
+                            },
+                            "Next": "PassExtendedRequestId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckHttpMethod",
+                    "States": {
+                        "CheckHttpMethod": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.httpMethod",
+                                    "IsPresent": true,
+                                    "Next": "PassHttpMethod"
+                                }
+                            ],
+                            "Default": "DefaultHttpMethod"
+                        },
+                        "PassHttpMethod": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.httpMethod"
+                        },
+                        "DefaultHttpMethod": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "HttpMethod": null
+                            },
+                            "Next": "PassHttpMethod"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckIdentity",
+                    "States": {
+                        "CheckIdentity": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.identity",
+                                    "IsPresent": true,
+                                    "Next": "PassIdentity"
+                                }
+                            ],
+                            "Default": "DefaultIdentity"
+                        },
+                        "PassIdentity": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.identity"
+                        },
+                        "DefaultIdentity": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Identity": null
+                            },
+                            "Next": "PassIdentity"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckIsCanaryRequest",
+                    "States": {
+                        "CheckIsCanaryRequest": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.isCanaryRequest",
+                                    "IsPresent": true,
+                                    "Next": "PassIsCanaryRequest"
+                                }
+                            ],
+                            "Default": "DefaultIsCanaryRequest"
+                        },
+                        "PassIsCanaryRequest": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.isCanaryRequest"
+                        },
+                        "DefaultIsCanaryRequest": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "IsCanaryRequest": null
+                            },
+                            "Next": "PassIsCanaryRequest"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckPath",
+                    "States": {
+                        "CheckPath": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.path",
+                                    "IsPresent": true,
+                                    "Next": "PassPath"
+                                }
+                            ],
+                            "Default": "DefaultPath"
+                        },
+                        "PassPath": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.path"
+                        },
+                        "DefaultPath": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Path": null
+                            },
+                            "Next": "PassPath"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckProtocol",
+                    "States": {
+                        "CheckProtocol": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.protocol",
+                                    "IsPresent": true,
+                                    "Next": "PassProtocol"
+                                }
+                            ],
+                            "Default": "DefaultProtocol"
+                        },
+                        "PassProtocol": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.protocol"
+                        },
+                        "DefaultProtocol": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Protocol": null
+                            },
+                            "Next": "PassProtocol"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckRequestId",
+                    "States": {
+                        "CheckRequestId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.requestId",
+                                    "IsPresent": true,
+                                    "Next": "PassRequestId"
+                                }
+                            ],
+                            "Default": "DefaultRequestId"
+                        },
+                        "PassRequestId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.requestId"
+                        },
+                        "DefaultRequestId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "RequestId": null
+                            },
+                            "Next": "PassRequestId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckRequestOverride",
+                    "States": {
+                        "CheckRequestOverride": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.requestOverride",
+                                    "IsPresent": true,
+                                    "Next": "PassRequestOverride"
+                                }
+                            ],
+                            "Default": "DefaultRequestOverride"
+                        },
+                        "PassRequestOverride": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.requestOverride"
+                        },
+                        "DefaultRequestOverride": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "RequestOverride": null
+                            },
+                            "Next": "PassRequestOverride"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckRequestTime",
+                    "States": {
+                        "CheckRequestTime": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.requestTime",
+                                    "IsPresent": true,
+                                    "Next": "PassRequestTime"
+                                }
+                            ],
+                            "Default": "DefaultRequestTime"
+                        },
+                        "PassRequestTime": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.requestTime"
+                        },
+                        "DefaultRequestTime": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "RequestTime": null
+                            },
+                            "Next": "PassRequestTime"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckRequestTimeEpoch",
+                    "States": {
+                        "CheckRequestTimeEpoch": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.requestTimeEpoch",
+                                    "IsPresent": true,
+                                    "Next": "PassRequestTimeEpoch"
+                                }
+                            ],
+                            "Default": "DefaultRequestTimeEpoch"
+                        },
+                        "PassRequestTimeEpoch": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.requestTimeEpoch"
+                        },
+                        "DefaultRequestTimeEpoch": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "RequestTimeEpoch": null
+                            },
+                            "Next": "PassRequestTimeEpoch"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckResourceId",
+                    "States": {
+                        "CheckResourceId": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.resourceId",
+                                    "IsPresent": true,
+                                    "Next": "PassResourceId"
+                                }
+                            ],
+                            "Default": "DefaultResourceId"
+                        },
+                        "PassResourceId": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.resourceId"
+                        },
+                        "DefaultResourceId": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "ResourceId": null
+                            },
+                            "Next": "PassResourceId"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckResourcePath",
+                    "States": {
+                        "CheckResourcePath": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.resourcePath",
+                                    "IsPresent": true,
+                                    "Next": "PassResourcePath"
+                                }
+                            ],
+                            "Default": "DefaultResourcePath"
+                        },
+                        "PassResourcePath": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.resourcePath"
+                        },
+                        "DefaultResourcePath": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Path": null
+                            },
+                            "Next": "PassResourcePath"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckStage",
+                    "States": {
+                        "CheckStage": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.stage",
+                                    "IsPresent": true,
+                                    "Next": "PassStage"
+                                }
+                            ],
+                            "Default": "DefaultStage"
+                        },
+                        "PassStage": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.stage"
+                        },
+                        "DefaultStage": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Path": null
+                            },
+                            "Next": "PassStage"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckWafResponseCode",
+                    "States": {
+                        "CheckWafResponseCode": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.wafResponseCode",
+                                    "IsPresent": true,
+                                    "Next": "PassWafResponseCode"
+                                }
+                            ],
+                            "Default": "DefaultWafResponseCode"
+                        },
+                        "PassWafResponseCode": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.wafResponseCode"
+                        },
+                        "DefaultWafResponseCode": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Path": null
+                            },
+                            "Next": "PassWafResponseCode"
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckWebAclArn",
+                    "States": {
+                        "CheckWebAclArn": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.webaclArn",
+                                    "IsPresent": true,
+                                    "Next": "PassWebAclArn"
+                                }
+                            ],
+                            "Default": "DefaultWebAclArn"
+                        },
+                        "PassWebAclArn": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.webaclArn"
+                        },
+                        "DefaultWebAclArn": {
+                            "Type": "Pass",
+                            "Parameters": {
+                                "Path": null
+                            },
+                            "Next": "PassWebAclArn"
+                        }
+                    }
                 }
             ],
-            "End": true
+            "Next": "BedrockInvokeModel",
+            "ResultSelector": {
+                "accountId.$": "$[0]",
+                "apiId.$": "$[1]",
+                "authorizer.$": "$[2]",
+                "awsEndpointRequestId.$": "$[3]",
+                "body.$": "$[4]",
+                "deploymentId.$": "$[5]",
+                "domainName.$": "$[6]",
+                "domainPrefix.$": "$[7]",
+                "extendedRequestId.$": "$[8]",
+                "httpMethod.$": "$[9]",
+                "identity.$": "$[10]",
+                "isCanaryRequest.$": "$[11]",
+                "path.$": "$[12]",
+                "protocol.$": "$[13]",
+                "requestId.$": "$[14]",
+                "requestOverride.$": "$[15]",
+                "requestTime.$": "$[16]",
+                "requestTimeEpoch.$": "$[17]",
+                "resourceId.$": "$[18]",
+                "resourcePath.$": "$[19]",
+                "stage.$": "$[20]",
+                "wafResponseCode.$": "$[21]",
+                "webaclArn.$": "$[22]"
+            }
+        },
+        "BedrockInvokeModel": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::bedrock:invokeModel",
+            "Parameters": {
+                "ModelId": "arn:aws:bedrock:${aws_region}::foundation-model/amazon.titan-tg1-large",
+                "Body": {
+                    "inputText.$": "$.body.inputText",
+                    "textGenerationConfig.$": "$.body.textGenerationConfig"
+                }
+            },
+            "Next": "SNS Publish",
+            "ResultPath": "$.output"
+        },
+        "SNS Publish": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sns:publish",
+            "Parameters": {
+                "TopicArn": "${sns_topic_arn}",
+                "Message.$": "$"
+            },
+            "Next": "Output",
+            "ResultPath": null
+        },
+        "Output": {
+            "Type": "Pass",
+            "Next": "Success",
+            "InputPath": "$.output"
+        },
+        "Success": {
+            "Type": "Succeed"
         }
     }
 }

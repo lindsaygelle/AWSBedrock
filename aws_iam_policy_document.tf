@@ -202,6 +202,15 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
   }
   statement {
     actions = [
+      "sns:Publish",
+    ]
+    effect = "Allow"
+    resources = [
+      "${aws_sns_topic.bedrock_text.arn}"
+    ]
+  }
+  statement {
+    actions = [
       "xray:GetSamplingRules",
       "xray:GetSamplingTargets",
       "xray:PutTelemetryRecords",
@@ -210,6 +219,43 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
     effect = "Allow"
     resources = [
       "*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "sns_topic_bedrock_text" {
+  statement {
+    actions = [
+      "logs:CreateLogDelivery",
+      "logs:CreateLogStream",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:DescribeResourcePolicies",
+      "logs:GetLogDelivery",
+      "logs:ListLogDeliveries",
+      "logs:PutLogEvents",
+      "logs:PutResourcePolicy",
+      "logs:UpdateLogDelivery",
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+  }
+  statement {
+    actions = [
+      "sns:*"
+    ]
+    condition {
+      test     = "StringEquals"
+      values   = ["${data.aws_caller_identity.main.account_id}"]
+      variable = "aws:SourceOwner"
+    }
+    effect = "Allow"
+    principals {
+      identifiers = ["*"]
+      type        = "AWS"
+    }
+    resources = [
+      "${aws_sns_topic.bedrock_text.arn}"
     ]
   }
 }
