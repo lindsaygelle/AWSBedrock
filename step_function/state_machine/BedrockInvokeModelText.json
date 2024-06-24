@@ -1,160 +1,160 @@
 {
-    "StartAt": "ParallelCheck",
+    "StartAt": "InputCheckInput",
     "States": {
-        "ParallelCheck": {
+        "InputCheckInput": {
             "Type": "Parallel",
             "Branches": [
                 {
-                    "StartAt": "CheckAccountId",
+                    "StartAt": "CheckInputAccountId",
                     "States": {
-                        "CheckAccountId": {
+                        "CheckInputAccountId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.accountId",
                                     "IsPresent": true,
-                                    "Next": "PassAccountId"
+                                    "Next": "PassInputAccountId"
                                 }
                             ],
-                            "Default": "DefaultAccountId"
+                            "Default": "DefaultInputAccountId"
                         },
-                        "PassAccountId": {
+                        "PassInputAccountId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.accountId "
                         },
-                        "DefaultAccountId": {
+                        "DefaultInputAccountId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "accountId": null
                             },
-                            "Next": "PassAccountId"
+                            "Next": "PassInputAccountId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckApiId",
+                    "StartAt": "CheckInputApiId",
                     "States": {
-                        "CheckApiId": {
+                        "CheckInputApiId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.apiId",
                                     "IsPresent": true,
-                                    "Next": "PassApiId"
+                                    "Next": "PassInputApiId"
                                 }
                             ],
-                            "Default": "DefaultApiId"
+                            "Default": "DefaultInputApiId"
                         },
-                        "PassApiId": {
+                        "PassInputApiId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.apiId"
                         },
-                        "DefaultApiId": {
+                        "DefaultInputApiId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "apiId": null
                             },
-                            "Next": "PassApiId"
+                            "Next": "PassInputApiId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckAuthorizer",
+                    "StartAt": "CheckInputAuthorizer",
                     "States": {
-                        "CheckAuthorizer": {
+                        "CheckInputAuthorizer": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.authorizer",
                                     "IsPresent": true,
-                                    "Next": "PassAuthorizer"
+                                    "Next": "PassInputAuthorizer"
                                 }
                             ],
-                            "Default": "DefaultAuthorizer"
+                            "Default": "DefaultInputAuthorizer"
                         },
-                        "PassAuthorizer": {
+                        "PassInputAuthorizer": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.authorizer"
                         },
-                        "DefaultAuthorizer": {
+                        "DefaultInputAuthorizer": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Authorizer": null
                             },
-                            "Next": "PassAuthorizer"
+                            "Next": "PassInputAuthorizer"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckAwsEndpointRequestId",
+                    "StartAt": "CheckInputAwsEndpointRequestId",
                     "States": {
-                        "CheckAwsEndpointRequestId": {
+                        "CheckInputAwsEndpointRequestId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.awsEndpointRequestId",
                                     "IsPresent": true,
-                                    "Next": "PassAwsEndpointRequestId"
+                                    "Next": "PassInputAwsEndpointRequestId"
                                 }
                             ],
-                            "Default": "DefaultAwsEndpointRequestId"
+                            "Default": "DefaultInputAwsEndpointRequestId"
                         },
-                        "PassAwsEndpointRequestId": {
+                        "PassInputAwsEndpointRequestId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.awsEndpointRequestId"
                         },
-                        "DefaultAwsEndpointRequestId": {
+                        "DefaultInputAwsEndpointRequestId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "AwsEndpointRequestId": null
                             },
-                            "Next": "PassAwsEndpointRequestId"
+                            "Next": "PassInputAwsEndpointRequestId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckBody",
+                    "StartAt": "CheckInputBody",
                     "States": {
-                        "CheckBody": {
+                        "CheckInputBody": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.body",
                                     "IsPresent": true,
-                                    "Next": "ParallelCheckBody"
+                                    "Next": "ParallelCheckInputBody"
                                 }
                             ],
-                            "Default": "DefaultBody"
+                            "Default": "DefaultInputBody"
                         },
-                        "ParallelCheckBody": {
+                        "ParallelCheckInputBody": {
                             "Type": "Parallel",
                             "Branches": [
                                 {
-                                    "StartAt": "CheckBodyInputText",
+                                    "StartAt": "CheckInputBodyInputText",
                                     "States": {
-                                        "CheckBodyInputText": {
+                                        "CheckInputBodyInputText": {
                                             "Type": "Choice",
                                             "Choices": [
                                                 {
                                                     "Variable": "$.inputText",
                                                     "IsPresent": true,
-                                                    "Next": "PassBodyInputTextValue"
+                                                    "Next": "PassInputBodyInputTextValue"
                                                 }
                                             ],
-                                            "Default": "DefaultBodyInputTextValue"
+                                            "Default": "DefaultInputBodyInputTextValue"
                                         },
-                                        "PassBodyInputTextValue": {
+                                        "PassInputBodyInputTextValue": {
                                             "Type": "Pass",
                                             "End": true,
                                             "InputPath": "$.inputText"
                                         },
-                                        "DefaultBodyInputTextValue": {
+                                        "DefaultInputBodyInputTextValue": {
                                             "Type": "Pass",
-                                            "Next": "PassBodyInputTextValue",
+                                            "Next": "PassInputBodyInputTextValue",
                                             "Parameters": {
                                                 "inputText": null
                                             }
@@ -162,37 +162,37 @@
                                     }
                                 },
                                 {
-                                    "StartAt": "CheckBodyTextGenerationConfig",
+                                    "StartAt": "CheckInputBodyTextGenerationConfig",
                                     "States": {
-                                        "CheckBodyTextGenerationConfig": {
+                                        "CheckInputBodyTextGenerationConfig": {
                                             "Type": "Choice",
                                             "Choices": [
                                                 {
                                                     "Variable": "$.textGenerationConfig",
                                                     "IsPresent": true,
-                                                    "Next": "ParallelCheckBodyTextGenerationConfig"
+                                                    "Next": "ParallelCheckInputBodyTextGenerationConfig"
                                                 }
                                             ],
-                                            "Default": "DefaultBodyTextGenerationConfig"
+                                            "Default": "DefaultInputBodyTextGenerationConfig"
                                         },
-                                        "ParallelCheckBodyTextGenerationConfig": {
+                                        "ParallelCheckInputBodyTextGenerationConfig": {
                                             "Type": "Parallel",
                                             "Branches": [
                                                 {
-                                                    "StartAt": "CheckBodyTextGenerationConfigMaxTokenCount",
+                                                    "StartAt": "CheckInputBodyTextGenerationConfigMaxTokenCount",
                                                     "States": {
-                                                        "CheckBodyTextGenerationConfigMaxTokenCount": {
+                                                        "CheckInputBodyTextGenerationConfigMaxTokenCount": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "Variable": "$.maxTokenCount",
                                                                     "IsPresent": true,
-                                                                    "Next": "CheckBodyTextGenerationConfigMaxTokenCountValue"
+                                                                    "Next": "CheckInputBodyTextGenerationConfigMaxTokenCountValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigMaxTokenCount"
+                                                            "Default": "DefaultInputBodyTextGenerationConfigMaxTokenCount"
                                                         },
-                                                        "CheckBodyTextGenerationConfigMaxTokenCountValue": {
+                                                        "CheckInputBodyTextGenerationConfigMaxTokenCountValue": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
@@ -220,24 +220,24 @@
                                                                             ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassBodyTextGenerationConfigMaxTokenCountValue"
+                                                                    "Next": "PassInputBodyTextGenerationConfigMaxTokenCountValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigMaxTokenCountValue",
+                                                            "Default": "DefaultInputBodyTextGenerationConfigMaxTokenCountValue",
                                                             "InputPath": "$.maxTokenCount"
                                                         },
-                                                        "PassBodyTextGenerationConfigMaxTokenCountValue": {
+                                                        "PassInputBodyTextGenerationConfigMaxTokenCountValue": {
                                                             "Type": "Pass",
                                                             "End": true
                                                         },
-                                                        "DefaultBodyTextGenerationConfigMaxTokenCountValue": {
+                                                        "DefaultInputBodyTextGenerationConfigMaxTokenCountValue": {
                                                             "Type": "Pass",
                                                             "Parameters": 512,
                                                             "End": true
                                                         },
-                                                        "DefaultBodyTextGenerationConfigMaxTokenCount": {
+                                                        "DefaultInputBodyTextGenerationConfigMaxTokenCount": {
                                                             "Type": "Pass",
-                                                            "Next": "CheckBodyTextGenerationConfigMaxTokenCountValue",
+                                                            "Next": "CheckInputBodyTextGenerationConfigMaxTokenCountValue",
                                                             "Parameters": {
                                                                 "maxTokenCount": null
                                                             }
@@ -245,9 +245,9 @@
                                                     }
                                                 },
                                                 {
-                                                    "StartAt": "CheckBodyTextGenerationConfigStopSequences",
+                                                    "StartAt": "CheckInputBodyTextGenerationConfigStopSequences",
                                                     "States": {
-                                                        "CheckBodyTextGenerationConfigStopSequences": {
+                                                        "CheckInputBodyTextGenerationConfigStopSequences": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
@@ -256,7 +256,7 @@
                                                                     "Next": "MapBodyTextGenerationConfigStopSequences"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigStopSequences"
+                                                            "Default": "DefaultInputBodyTextGenerationConfigStopSequences"
                                                         },
                                                         "MapBodyTextGenerationConfigStopSequences": {
                                                             "Type": "Map",
@@ -264,9 +264,9 @@
                                                                 "ProcessorConfig": {
                                                                     "Mode": "INLINE"
                                                                 },
-                                                                "StartAt": "CheckBodyTextGenerationConfigStopSequence",
+                                                                "StartAt": "CheckInputBodyTextGenerationConfigStopSequence",
                                                                 "States": {
-                                                                    "CheckBodyTextGenerationConfigStopSequence": {
+                                                                    "CheckInputBodyTextGenerationConfigStopSequence": {
                                                                         "Type": "Choice",
                                                                         "Choices": [
                                                                             {
@@ -286,16 +286,16 @@
                                                                                         ]
                                                                                     }
                                                                                 ],
-                                                                                "Next": "PassBodyTextGenerationConfigStopSequence"
+                                                                                "Next": "PassInputBodyTextGenerationConfigStopSequence"
                                                                             }
                                                                         ],
-                                                                        "Default": "DefaultBodyTextGenerationConfigStopSequence"
+                                                                        "Default": "DefaultInputBodyTextGenerationConfigStopSequence"
                                                                     },
-                                                                    "PassBodyTextGenerationConfigStopSequence": {
+                                                                    "PassInputBodyTextGenerationConfigStopSequence": {
                                                                         "Type": "Pass",
                                                                         "End": true
                                                                     },
-                                                                    "DefaultBodyTextGenerationConfigStopSequence": {
+                                                                    "DefaultInputBodyTextGenerationConfigStopSequence": {
                                                                         "Type": "Pass",
                                                                         "End": true,
                                                                         "Parameters": {
@@ -308,7 +308,7 @@
                                                             "End": true,
                                                             "ItemsPath": "$.stopSequences"
                                                         },
-                                                        "DefaultBodyTextGenerationConfigStopSequences": {
+                                                        "DefaultInputBodyTextGenerationConfigStopSequences": {
                                                             "Type": "Pass",
                                                             "Parameters": {
                                                                 "stopSequences": []
@@ -318,20 +318,20 @@
                                                     }
                                                 },
                                                 {
-                                                    "StartAt": "CheckBodyTextGenerationConfigTemperature",
+                                                    "StartAt": "CheckInputBodyTextGenerationConfigTemperature",
                                                     "States": {
-                                                        "CheckBodyTextGenerationConfigTemperature": {
+                                                        "CheckInputBodyTextGenerationConfigTemperature": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "Variable": "$.temperature",
                                                                     "IsPresent": true,
-                                                                    "Next": "CheckBodyTextGenerationConfigTemperatureValue"
+                                                                    "Next": "CheckInputBodyTextGenerationConfigTemperatureValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigTemperature"
+                                                            "Default": "DefaultInputBodyTextGenerationConfigTemperature"
                                                         },
-                                                        "CheckBodyTextGenerationConfigTemperatureValue": {
+                                                        "CheckInputBodyTextGenerationConfigTemperatureValue": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
@@ -359,45 +359,45 @@
                                                                             ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassBodyTextGenerationConfigTemperatureValue"
+                                                                    "Next": "PassInputBodyTextGenerationConfigTemperatureValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigTemperatureValue",
+                                                            "Default": "DefaultInputBodyTextGenerationConfigTemperatureValue",
                                                             "InputPath": "$.temperature"
                                                         },
-                                                        "PassBodyTextGenerationConfigTemperatureValue": {
+                                                        "PassInputBodyTextGenerationConfigTemperatureValue": {
                                                             "Type": "Pass",
                                                             "End": true
                                                         },
-                                                        "DefaultBodyTextGenerationConfigTemperatureValue": {
+                                                        "DefaultInputBodyTextGenerationConfigTemperatureValue": {
                                                             "Type": "Pass",
                                                             "Parameters": 1,
                                                             "End": true
                                                         },
-                                                        "DefaultBodyTextGenerationConfigTemperature": {
+                                                        "DefaultInputBodyTextGenerationConfigTemperature": {
                                                             "Type": "Pass",
                                                             "Parameters": {
                                                                 "temperature": null
                                                             },
-                                                            "Next": "CheckBodyTextGenerationConfigTemperatureValue"
+                                                            "Next": "CheckInputBodyTextGenerationConfigTemperatureValue"
                                                         }
                                                     }
                                                 },
                                                 {
-                                                    "StartAt": "CheckBodyTextGenerationConfigTopP",
+                                                    "StartAt": "CheckInputBodyTextGenerationConfigTopP",
                                                     "States": {
-                                                        "CheckBodyTextGenerationConfigTopP": {
+                                                        "CheckInputBodyTextGenerationConfigTopP": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "Variable": "$.topP",
                                                                     "IsPresent": true,
-                                                                    "Next": "CheckBodyTextGenerationConfigTopPValue"
+                                                                    "Next": "CheckInputBodyTextGenerationConfigTopPValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigTopP"
+                                                            "Default": "DefaultInputBodyTextGenerationConfigTopP"
                                                         },
-                                                        "CheckBodyTextGenerationConfigTopPValue": {
+                                                        "CheckInputBodyTextGenerationConfigTopPValue": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
@@ -425,26 +425,26 @@
                                                                             ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassBodyTextGenerationConfigTopPValue"
+                                                                    "Next": "PassInputBodyTextGenerationConfigTopPValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultBodyTextGenerationConfigTopPValue"
+                                                            "Default": "DefaultInputBodyTextGenerationConfigTopPValue"
                                                         },
-                                                        "PassBodyTextGenerationConfigTopPValue": {
+                                                        "PassInputBodyTextGenerationConfigTopPValue": {
                                                             "Type": "Pass",
                                                             "End": true
                                                         },
-                                                        "DefaultBodyTextGenerationConfigTopPValue": {
+                                                        "DefaultInputBodyTextGenerationConfigTopPValue": {
                                                             "Type": "Pass",
                                                             "End": true,
                                                             "Parameters": 1
                                                         },
-                                                        "DefaultBodyTextGenerationConfigTopP": {
+                                                        "DefaultInputBodyTextGenerationConfigTopP": {
                                                             "Type": "Pass",
                                                             "Parameters": {
                                                                 "topP": null
                                                             },
-                                                            "Next": "CheckBodyTextGenerationConfigTopPValue"
+                                                            "Next": "CheckInputBodyTextGenerationConfigTopPValue"
                                                         }
                                                     }
                                                 }
@@ -458,12 +458,12 @@
                                             },
                                             "End": true
                                         },
-                                        "DefaultBodyTextGenerationConfig": {
+                                        "DefaultInputBodyTextGenerationConfig": {
                                             "Type": "Pass",
                                             "Parameters": {
                                                 "textGenerationConfig": {}
                                             },
-                                            "Next": "ParallelCheckBodyTextGenerationConfig"
+                                            "Next": "ParallelCheckInputBodyTextGenerationConfig"
                                         }
                                     }
                                 }
@@ -475,9 +475,9 @@
                             },
                             "End": true
                         },
-                        "DefaultBody": {
+                        "DefaultInputBody": {
                             "Type": "Pass",
-                            "Next": "ParallelCheckBody",
+                            "Next": "ParallelCheckInputBody",
                             "Parameters": {
                                 "body": {}
                             }
@@ -485,506 +485,506 @@
                     }
                 },
                 {
-                    "StartAt": "CheckDeploymentId",
+                    "StartAt": "CheckInputDeploymentId",
                     "States": {
-                        "CheckDeploymentId": {
+                        "CheckInputDeploymentId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.deploymentId",
                                     "IsPresent": true,
-                                    "Next": "PassDeploymentId"
+                                    "Next": "PassInputDeploymentId"
                                 }
                             ],
-                            "Default": "DefaultDeploymentId"
+                            "Default": "DefaultInputDeploymentId"
                         },
-                        "PassDeploymentId": {
+                        "PassInputDeploymentId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.deploymentId"
                         },
-                        "DefaultDeploymentId": {
+                        "DefaultInputDeploymentId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "DeploymentId": null
                             },
-                            "Next": "PassDeploymentId"
+                            "Next": "PassInputDeploymentId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckDomainName",
+                    "StartAt": "CheckInputDomainName",
                     "States": {
-                        "CheckDomainName": {
+                        "CheckInputDomainName": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.domainName",
                                     "IsPresent": true,
-                                    "Next": "PassDomainName"
+                                    "Next": "PassInputDomainName"
                                 }
                             ],
-                            "Default": "DefaultDomainName"
+                            "Default": "DefaultInputDomainName"
                         },
-                        "PassDomainName": {
+                        "PassInputDomainName": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.domainName"
                         },
-                        "DefaultDomainName": {
+                        "DefaultInputDomainName": {
                             "Type": "Pass",
                             "Parameters": {
                                 "DomainName": null
                             },
-                            "Next": "PassDomainName"
+                            "Next": "PassInputDomainName"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckDomainPrefix",
+                    "StartAt": "CheckInputDomainPrefix",
                     "States": {
-                        "CheckDomainPrefix": {
+                        "CheckInputDomainPrefix": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.domainPrefix",
                                     "IsPresent": true,
-                                    "Next": "PassDomainPrefix"
+                                    "Next": "PassInputDomainPrefix"
                                 }
                             ],
-                            "Default": "DefaultDomainPrefix"
+                            "Default": "DefaultInputDomainPrefix"
                         },
-                        "PassDomainPrefix": {
+                        "PassInputDomainPrefix": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.domainPrefix"
                         },
-                        "DefaultDomainPrefix": {
+                        "DefaultInputDomainPrefix": {
                             "Type": "Pass",
                             "Parameters": {
                                 "DomainPrefix": null
                             },
-                            "Next": "PassDomainPrefix"
+                            "Next": "PassInputDomainPrefix"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckExtendedRequestId",
+                    "StartAt": "CheckInputExtendedRequestId",
                     "States": {
-                        "CheckExtendedRequestId": {
+                        "CheckInputExtendedRequestId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.extendedRequestId",
                                     "IsPresent": true,
-                                    "Next": "PassExtendedRequestId"
+                                    "Next": "PassInputExtendedRequestId"
                                 }
                             ],
-                            "Default": "DefaultExtendedRequestId"
+                            "Default": "DefaultInputExtendedRequestId"
                         },
-                        "PassExtendedRequestId": {
+                        "PassInputExtendedRequestId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.extendedRequestId"
                         },
-                        "DefaultExtendedRequestId": {
+                        "DefaultInputExtendedRequestId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "ExtendedRequestId": null
                             },
-                            "Next": "PassExtendedRequestId"
+                            "Next": "PassInputExtendedRequestId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckHttpMethod",
+                    "StartAt": "CheckInputHttpMethod",
                     "States": {
-                        "CheckHttpMethod": {
+                        "CheckInputHttpMethod": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.httpMethod",
                                     "IsPresent": true,
-                                    "Next": "PassHttpMethod"
+                                    "Next": "PassInputHttpMethod"
                                 }
                             ],
-                            "Default": "DefaultHttpMethod"
+                            "Default": "DefaultInputHttpMethod"
                         },
-                        "PassHttpMethod": {
+                        "PassInputHttpMethod": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.httpMethod"
                         },
-                        "DefaultHttpMethod": {
+                        "DefaultInputHttpMethod": {
                             "Type": "Pass",
                             "Parameters": {
                                 "HttpMethod": null
                             },
-                            "Next": "PassHttpMethod"
+                            "Next": "PassInputHttpMethod"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckIdentity",
+                    "StartAt": "CheckInputIdentity",
                     "States": {
-                        "CheckIdentity": {
+                        "CheckInputIdentity": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.identity",
                                     "IsPresent": true,
-                                    "Next": "PassIdentity"
+                                    "Next": "PassInputIdentity"
                                 }
                             ],
-                            "Default": "DefaultIdentity"
+                            "Default": "DefaultInputIdentity"
                         },
-                        "PassIdentity": {
+                        "PassInputIdentity": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.identity"
                         },
-                        "DefaultIdentity": {
+                        "DefaultInputIdentity": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Identity": null
                             },
-                            "Next": "PassIdentity"
+                            "Next": "PassInputIdentity"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckIsCanaryRequest",
+                    "StartAt": "CheckInputIsCanaryRequest",
                     "States": {
-                        "CheckIsCanaryRequest": {
+                        "CheckInputIsCanaryRequest": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.isCanaryRequest",
                                     "IsPresent": true,
-                                    "Next": "PassIsCanaryRequest"
+                                    "Next": "PassInputIsCanaryRequest"
                                 }
                             ],
-                            "Default": "DefaultIsCanaryRequest"
+                            "Default": "DefaultInputIsCanaryRequest"
                         },
-                        "PassIsCanaryRequest": {
+                        "PassInputIsCanaryRequest": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.isCanaryRequest"
                         },
-                        "DefaultIsCanaryRequest": {
+                        "DefaultInputIsCanaryRequest": {
                             "Type": "Pass",
                             "Parameters": {
                                 "IsCanaryRequest": null
                             },
-                            "Next": "PassIsCanaryRequest"
+                            "Next": "PassInputIsCanaryRequest"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckPath",
+                    "StartAt": "CheckInputPath",
                     "States": {
-                        "CheckPath": {
+                        "CheckInputPath": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.path",
                                     "IsPresent": true,
-                                    "Next": "PassPath"
+                                    "Next": "PassInputPath"
                                 }
                             ],
-                            "Default": "DefaultPath"
+                            "Default": "DefaultInputPath"
                         },
-                        "PassPath": {
+                        "PassInputPath": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.path"
                         },
-                        "DefaultPath": {
+                        "DefaultInputPath": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Path": null
                             },
-                            "Next": "PassPath"
+                            "Next": "PassInputPath"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckProtocol",
+                    "StartAt": "CheckInputProtocol",
                     "States": {
-                        "CheckProtocol": {
+                        "CheckInputProtocol": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.protocol",
                                     "IsPresent": true,
-                                    "Next": "PassProtocol"
+                                    "Next": "PassInputProtocol"
                                 }
                             ],
-                            "Default": "DefaultProtocol"
+                            "Default": "DefaultInputProtocol"
                         },
-                        "PassProtocol": {
+                        "PassInputProtocol": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.protocol"
                         },
-                        "DefaultProtocol": {
+                        "DefaultInputProtocol": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Protocol": null
                             },
-                            "Next": "PassProtocol"
+                            "Next": "PassInputProtocol"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckRequestId",
+                    "StartAt": "CheckInputRequestId",
                     "States": {
-                        "CheckRequestId": {
+                        "CheckInputRequestId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.requestId",
                                     "IsPresent": true,
-                                    "Next": "PassRequestId"
+                                    "Next": "PassInputRequestId"
                                 }
                             ],
-                            "Default": "DefaultRequestId"
+                            "Default": "DefaultInputRequestId"
                         },
-                        "PassRequestId": {
+                        "PassInputRequestId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.requestId"
                         },
-                        "DefaultRequestId": {
+                        "DefaultInputRequestId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "RequestId": null
                             },
-                            "Next": "PassRequestId"
+                            "Next": "PassInputRequestId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckRequestOverride",
+                    "StartAt": "CheckInputRequestOverride",
                     "States": {
-                        "CheckRequestOverride": {
+                        "CheckInputRequestOverride": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.requestOverride",
                                     "IsPresent": true,
-                                    "Next": "PassRequestOverride"
+                                    "Next": "PassInputRequestOverride"
                                 }
                             ],
-                            "Default": "DefaultRequestOverride"
+                            "Default": "DefaultInputRequestOverride"
                         },
-                        "PassRequestOverride": {
+                        "PassInputRequestOverride": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.requestOverride"
                         },
-                        "DefaultRequestOverride": {
+                        "DefaultInputRequestOverride": {
                             "Type": "Pass",
                             "Parameters": {
                                 "RequestOverride": null
                             },
-                            "Next": "PassRequestOverride"
+                            "Next": "PassInputRequestOverride"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckRequestTime",
+                    "StartAt": "CheckInputRequestTime",
                     "States": {
-                        "CheckRequestTime": {
+                        "CheckInputRequestTime": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.requestTime",
                                     "IsPresent": true,
-                                    "Next": "PassRequestTime"
+                                    "Next": "PassInputRequestTime"
                                 }
                             ],
-                            "Default": "DefaultRequestTime"
+                            "Default": "DefaultInputRequestTime"
                         },
-                        "PassRequestTime": {
+                        "PassInputRequestTime": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.requestTime"
                         },
-                        "DefaultRequestTime": {
+                        "DefaultInputRequestTime": {
                             "Type": "Pass",
                             "Parameters": {
                                 "RequestTime": null
                             },
-                            "Next": "PassRequestTime"
+                            "Next": "PassInputRequestTime"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckRequestTimeEpoch",
+                    "StartAt": "CheckInputRequestTimeEpoch",
                     "States": {
-                        "CheckRequestTimeEpoch": {
+                        "CheckInputRequestTimeEpoch": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.requestTimeEpoch",
                                     "IsPresent": true,
-                                    "Next": "PassRequestTimeEpoch"
+                                    "Next": "PassInputRequestTimeEpoch"
                                 }
                             ],
-                            "Default": "DefaultRequestTimeEpoch"
+                            "Default": "DefaultInputRequestTimeEpoch"
                         },
-                        "PassRequestTimeEpoch": {
+                        "PassInputRequestTimeEpoch": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.requestTimeEpoch"
                         },
-                        "DefaultRequestTimeEpoch": {
+                        "DefaultInputRequestTimeEpoch": {
                             "Type": "Pass",
                             "Parameters": {
                                 "RequestTimeEpoch": null
                             },
-                            "Next": "PassRequestTimeEpoch"
+                            "Next": "PassInputRequestTimeEpoch"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckResourceId",
+                    "StartAt": "CheckInputResourceId",
                     "States": {
-                        "CheckResourceId": {
+                        "CheckInputResourceId": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.resourceId",
                                     "IsPresent": true,
-                                    "Next": "PassResourceId"
+                                    "Next": "PassInputResourceId"
                                 }
                             ],
-                            "Default": "DefaultResourceId"
+                            "Default": "DefaultInputResourceId"
                         },
-                        "PassResourceId": {
+                        "PassInputResourceId": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.resourceId"
                         },
-                        "DefaultResourceId": {
+                        "DefaultInputResourceId": {
                             "Type": "Pass",
                             "Parameters": {
                                 "ResourceId": null
                             },
-                            "Next": "PassResourceId"
+                            "Next": "PassInputResourceId"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckResourcePath",
+                    "StartAt": "CheckInputResourcePath",
                     "States": {
-                        "CheckResourcePath": {
+                        "CheckInputResourcePath": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.resourcePath",
                                     "IsPresent": true,
-                                    "Next": "PassResourcePath"
+                                    "Next": "PassInputResourcePath"
                                 }
                             ],
-                            "Default": "DefaultResourcePath"
+                            "Default": "DefaultInputResourcePath"
                         },
-                        "PassResourcePath": {
+                        "PassInputResourcePath": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.resourcePath"
                         },
-                        "DefaultResourcePath": {
+                        "DefaultInputResourcePath": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Path": null
                             },
-                            "Next": "PassResourcePath"
+                            "Next": "PassInputResourcePath"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckStage",
+                    "StartAt": "CheckInputStage",
                     "States": {
-                        "CheckStage": {
+                        "CheckInputStage": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.stage",
                                     "IsPresent": true,
-                                    "Next": "PassStage"
+                                    "Next": "PassInputStage"
                                 }
                             ],
-                            "Default": "DefaultStage"
+                            "Default": "DefaultInputStage"
                         },
-                        "PassStage": {
+                        "PassInputStage": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.stage"
                         },
-                        "DefaultStage": {
+                        "DefaultInputStage": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Path": null
                             },
-                            "Next": "PassStage"
+                            "Next": "PassInputStage"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckWafResponseCode",
+                    "StartAt": "CheckInputWafResponseCode",
                     "States": {
-                        "CheckWafResponseCode": {
+                        "CheckInputWafResponseCode": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.wafResponseCode",
                                     "IsPresent": true,
-                                    "Next": "PassWafResponseCode"
+                                    "Next": "PassInputWafResponseCode"
                                 }
                             ],
-                            "Default": "DefaultWafResponseCode"
+                            "Default": "DefaultInputWafResponseCode"
                         },
-                        "PassWafResponseCode": {
+                        "PassInputWafResponseCode": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.wafResponseCode"
                         },
-                        "DefaultWafResponseCode": {
+                        "DefaultInputWafResponseCode": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Path": null
                             },
-                            "Next": "PassWafResponseCode"
+                            "Next": "PassInputWafResponseCode"
                         }
                     }
                 },
                 {
-                    "StartAt": "CheckWebAclArn",
+                    "StartAt": "CheckInputWebAclArn",
                     "States": {
-                        "CheckWebAclArn": {
+                        "CheckInputWebAclArn": {
                             "Type": "Choice",
                             "Choices": [
                                 {
                                     "Variable": "$.webaclArn",
                                     "IsPresent": true,
-                                    "Next": "PassWebAclArn"
+                                    "Next": "PassInputWebAclArn"
                                 }
                             ],
-                            "Default": "DefaultWebAclArn"
+                            "Default": "DefaultInputWebAclArn"
                         },
-                        "PassWebAclArn": {
+                        "PassInputWebAclArn": {
                             "Type": "Pass",
                             "End": true,
                             "InputPath": "$.webaclArn"
                         },
-                        "DefaultWebAclArn": {
+                        "DefaultInputWebAclArn": {
                             "Type": "Pass",
                             "Parameters": {
                                 "Path": null
                             },
-                            "Next": "PassWebAclArn"
+                            "Next": "PassInputWebAclArn"
                         }
                     }
                 }
@@ -1026,23 +1026,137 @@
                     "textGenerationConfig.$": "$.body.textGenerationConfig"
                 }
             },
-            "Next": "SNS Publish",
-            "ResultPath": "$.output"
+            "Next": "CheckOutput"
         },
-        "SNS Publish": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sns:publish",
-            "Parameters": {
-                "TopicArn": "${sns_topic_arn}",
-                "Message.$": "$"
-            },
+        "CheckOutput": {
+            "Type": "Parallel",
             "Next": "Output",
-            "ResultPath": null
+            "Branches": [
+                {
+                    "StartAt": "CheckOutputBody",
+                    "States": {
+                        "CheckOutputBody": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.Body",
+                                    "IsPresent": true,
+                                    "Next": "ParallelCheckOutputBody"
+                                }
+                            ],
+                            "Default": "DefaultOutputBody"
+                        },
+                        "ParallelCheckOutputBody": {
+                            "Type": "Parallel",
+                            "End": true,
+                            "Branches": [
+                                {
+                                    "StartAt": "CheckOutputBodyInputTextTokenCount",
+                                    "States": {
+                                        "CheckOutputBodyInputTextTokenCount": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$.inputTextTokenCount",
+                                                    "IsPresent": true,
+                                                    "Next": "PassOutputBodyInputTextTokenCount"
+                                                }
+                                            ],
+                                            "Default": "DefaultOutputBodyInputTextTokenCount"
+                                        },
+                                        "PassOutputBodyInputTextTokenCount": {
+                                            "Type": "Pass",
+                                            "End": true,
+                                            "InputPath": "$.inputTextTokenCount"
+                                        },
+                                        "DefaultOutputBodyInputTextTokenCount": {
+                                            "Type": "Pass",
+                                            "Next": "PassOutputBodyInputTextTokenCount",
+                                            "Parameters": {
+                                                "inputTextTokenCount": null
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckOutputBodyResults",
+                                    "States": {
+                                        "CheckOutputBodyResults": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$.results",
+                                                    "IsPresent": true,
+                                                    "Next": "PassOutputBodyResults"
+                                                }
+                                            ],
+                                            "Default": "DefaultOutputBodyResults"
+                                        },
+                                        "PassOutputBodyResults": {
+                                            "Type": "Pass",
+                                            "End": true,
+                                            "InputPath": "$.results"
+                                        },
+                                        "DefaultOutputBodyResults": {
+                                            "Type": "Pass",
+                                            "End": true,
+                                            "Parameters": {
+                                                "results": null
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "InputPath": "$.Body",
+                            "ResultSelector": {
+                                "inputTextTokenCount.$": "$[0]",
+                                "results.$": "$[1]"
+                            }
+                        },
+                        "DefaultOutputBody": {
+                            "Type": "Pass",
+                            "Next": "ParallelCheckOutputBody",
+                            "Parameters": {
+                                "Body": {}
+                            }
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckOutputContentType",
+                    "States": {
+                        "CheckOutputContentType": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "Variable": "$.ContentType",
+                                    "IsPresent": true,
+                                    "Next": "PassOutputContentType"
+                                }
+                            ],
+                            "Default": "DefaultOutputContentType"
+                        },
+                        "PassOutputContentType": {
+                            "Type": "Pass",
+                            "End": true,
+                            "InputPath": "$.ContentType"
+                        },
+                        "DefaultOutputContentType": {
+                            "Type": "Pass",
+                            "Next": "PassOutputContentType"
+                        }
+                    }
+                }
+            ],
+            "ResultSelector": {
+                "Body.$": "$[0]",
+                "ContentType.$": "$[1]"
+            }
         },
         "Output": {
             "Type": "Pass",
             "Next": "Success",
-            "InputPath": "$.output"
+            "InputPath": "$.Body"
         },
         "Success": {
             "Type": "Succeed"

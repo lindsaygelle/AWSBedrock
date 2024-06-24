@@ -1,6 +1,6 @@
-resource "aws_iam_role" "api_gateway_rest_api" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_api_gateway.json
-  name               = "api_gateway_rest_api"
+resource "aws_iam_role" "api_gateway_rest_api_bedrock" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_api_gateway_bedrock.json
+  name               = "${title(local.organization)}APIGatewayRESTAPIBedrock"
   path               = "/${local.organization}/"
   tags = {
     caller_identity_account_arn  = data.aws_caller_identity.main.arn
@@ -20,7 +20,7 @@ resource "aws_iam_role" "api_gateway_rest_api" {
 
 resource "aws_iam_role" "sfn_state_machine_bedrock_text" {
   assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_bedrock_text.json
-  name               = "sfn_state_machine_bedrock_text"
+  name               = "${title(local.organization)}SFNStateMachineBedrockText"
   path               = "/${local.organization}/"
   tags = {
     caller_identity_account_arn  = data.aws_caller_identity.main.arn

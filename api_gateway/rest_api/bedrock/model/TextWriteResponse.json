@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "properties": {
+        "inputTextTokenCount": {
+            "minimum": 0,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "results": {
+            "items": {
+                "minItems": 0,
+                "properties": {
+                    "completionReason": {
+                        "maxLength": 27,
+                        "minLength": 6,
+                        "enum": [
+                            "CONTENT_FILTERED",
+                            "FINISHED",
+                            "LENGTH",
+                            "RAG_QUERY_WHEN_RAG_DISABLED",
+                            "STOP_CRITERIA_MET"
+                        ],
+                        "type": [
+                            "string"
+                        ]
+                    },
+                    "outputText": {
+                        "minLength": 0,
+                        "type": [
+                            "string"
+                        ]
+                    },
+                    "tokenCount": {
+                        "minimum": 0,
+                        "type": [
+                            "integer"
+                        ]
+                    }
+                },
+                "required": [
+                    "completionReason",
+                    "outputText",
+                    "tokenCount"
+                ],
+                "type": [
+                    "object"
+                ]
+            },
+            "type": [
+                "null",
+                "object"
+            ]
+        }
+    },
+    "required": [
+        "inputTextTokenCount",
+        "results"
+    ],
+    "title": "TextWriteResponse",
+    "type": [
+        "object"
+    ]
+}
