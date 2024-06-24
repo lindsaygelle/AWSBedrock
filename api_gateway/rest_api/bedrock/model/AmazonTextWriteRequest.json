@@ -58,7 +58,7 @@
     "required": [
         "inputText"
     ],
-    "title": "TextWriteRequest",
+    "title": "AmazonTextWriteRequest",
     "type": [
         "object"
     ]

@@ -18,9 +18,9 @@ resource "aws_iam_role" "api_gateway_rest_api_bedrock" {
   }
 }
 
-resource "aws_iam_role" "sfn_state_machine_bedrock_text" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_bedrock_text.json
-  name               = "${title(local.organization)}SFNStateMachineBedrockText"
+resource "aws_iam_role" "sfn_state_machine_bedrock_amazon_text" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_bedrock_amazon_text.json
+  name               = "${title(local.organization)}SFNStateMachineBedrockAmazonText"
   path               = "/${local.organization}/"
   tags = {
     caller_identity_account_arn  = data.aws_caller_identity.main.arn
