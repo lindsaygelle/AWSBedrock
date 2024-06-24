@@ -1,4 +1,4 @@
-resource "aws_api_gateway_rest_api" "main" {
+resource "aws_api_gateway_rest_api" "bedrock" {
   description                  = null
   disable_execute_api_endpoint = false
   endpoint_configuration {
@@ -7,7 +7,7 @@ resource "aws_api_gateway_rest_api" "main" {
   }
   fail_on_warnings         = false
   minimum_compression_size = null
-  name                     = local.organization
+  name                     = "${local.organization}-bedrock"
   tags = {
     caller_identity_account_arn  = data.aws_caller_identity.main.arn
     caller_identity_account_id   = data.aws_caller_identity.main.account_id

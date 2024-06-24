@@ -1,7 +1,7 @@
 resource "aws_sfn_state_machine" "bedrock_text" {
   definition = templatefile("./step_function/state_machine/BedrockInvokeModelText.json", {
-    aws_region    = data.aws_region.main.name
-    sns_topic_arn = aws_sns_topic.bedrock_text.arn
+    aws_region                        = data.aws_region.main.name
+    sqs_topic_api_gateway_rest_api_id = aws_sqs_queue.api_gateway_rest_api.id
   })
   logging_configuration {
     include_execution_data = true

@@ -1,6 +1,7 @@
-resource "aws_cloudwatch_log_group" "api_gateway_rest_api" {
+
+resource "aws_cloudwatch_log_group" "api_gateway_rest_api_bedrock_latest" {
   log_group_class   = "STANDARD"
-  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.main.id}"
+  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_stage.bedrock.rest_api_id}/${aws_api_gateway_stage.bedrock.stage_name}"
   retention_in_days = 7
   skip_destroy      = false
   tags = {
@@ -40,7 +41,8 @@ resource "aws_cloudwatch_log_group" "sfn_state_machine_bedrock_text" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "sns_topic_bedrock_text" {
+/*
+resource "aws_cloudwatch_log_group" "sqs_queue_api_gateway_rest_api" {
   log_group_class   = "STANDARD"
   name              = "/aws/vendedlogs/sns/${local.organization}-bedrock-text"
   retention_in_days = 7
@@ -60,3 +62,4 @@ resource "aws_cloudwatch_log_group" "sns_topic_bedrock_text" {
     workspace                    = terraform.workspace
   }
 }
+*/

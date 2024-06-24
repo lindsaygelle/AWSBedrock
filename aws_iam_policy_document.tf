@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "assume_role_api_gateway" {
+data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   statement {
     actions = ["sts:AssumeRole"]
     effect  = "Allow"
@@ -22,25 +22,20 @@ data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_text" {
   }
 }
 
-data "aws_iam_policy_document" "api_gateway_rest_api" {
+data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
   statement {
     actions = [
-      "logs:CreateLogDelivery",
       "logs:CreateLogGroup",
-      "logs:DeleteLogDelivery",
+      "logs:CreateLogStream",
       "logs:DescribeLogGroups",
       "logs:DescribeLogStreams",
-      "logs:DescribeResourcePolicies",
-      "logs:FilterLogEvents",
-      "logs:GetLogDelivery",
+      "logs:PutLogEvents",
       "logs:GetLogEvents",
-      "logs:ListLogDeliveries",
-      "logs:PutResourcePolicy",
-      "logs:UpdateLogDelivery"
+      "logs:FilterLogEvents"
     ]
     effect = "Allow"
     resources = [
-      "${aws_cloudwatch_log_group.api_gateway_rest_api.arn}/*"
+      "${aws_cloudwatch_log_group.api_gateway_rest_api_bedrock_latest.arn}"
     ]
   }
   statement {
@@ -202,11 +197,11 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
   }
   statement {
     actions = [
-      "sns:Publish",
+      "sqs:SendMessage",
     ]
     effect = "Allow"
     resources = [
-      "${aws_sns_topic.bedrock_text.arn}"
+      "${aws_sqs_queue.api_gateway_rest_api.arn}"
     ]
   }
   statement {
@@ -223,39 +218,21 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
   }
 }
 
-data "aws_iam_policy_document" "sns_topic_bedrock_text" {
+data "aws_iam_policy_document" "sqs_queue_api_gateway_rest_api" {
   statement {
-    actions = [
-      "logs:CreateLogDelivery",
-      "logs:CreateLogStream",
-      "logs:DeleteLogDelivery",
-      "logs:DescribeLogGroups",
-      "logs:DescribeResourcePolicies",
-      "logs:GetLogDelivery",
-      "logs:ListLogDeliveries",
-      "logs:PutLogEvents",
-      "logs:PutResourcePolicy",
-      "logs:UpdateLogDelivery",
-    ]
-    effect    = "Allow"
-    resources = ["*"]
-  }
-  statement {
-    actions = [
-      "sns:*"
-    ]
+    actions = ["sqs:SendMessage"]
     condition {
-      test     = "StringEquals"
-      values   = ["${data.aws_caller_identity.main.account_id}"]
-      variable = "aws:SourceOwner"
+      test     = "ArnLike"
+      values   = [aws_sfn_state_machine.bedrock_text.arn]
+      variable = "aws:SourceArn"
     }
     effect = "Allow"
     principals {
-      identifiers = ["*"]
-      type        = "AWS"
+      type        = "Service"
+      identifiers = ["states.amazonaws.com"]
     }
     resources = [
-      "${aws_sns_topic.bedrock_text.arn}"
+      aws_sqs_queue.api_gateway_rest_api.arn
     ]
   }
 }
