@@ -57,6 +57,7 @@ data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
     ]
     effect = "Allow"
     resources = [
+      "${aws_sfn_state_machine.bedrock_amazon_image_text_image.arn}",
       "${aws_sfn_state_machine.bedrock_amazon_text.arn}"
     ]
   }
