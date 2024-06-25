@@ -1,2 +1,2 @@
-#set($outputRoot = $util.parseJson($input.json("$.output")))
-$outputRoot
+#set($responseBody = $util.parseJson($input.body))
+$responseBody.get("output")

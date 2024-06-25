@@ -140,16 +140,8 @@
                                             "Type": "Choice",
                                             "Choices": [
                                                 {
-                                                    "And": [
-                                                        {
-                                                            "Variable": "$.inputText",
-                                                            "IsPresent": true
-                                                        },
-                                                        {
-                                                            "Variable": "$.inputText",
-                                                            "IsString": true
-                                                        }
-                                                    ],
+                                                    "Variable": "$.inputText",
+                                                    "IsPresent": true,
                                                     "Next": "PassInputBodyInputTextValue"
                                                 }
                                             ],
@@ -166,62 +158,6 @@
                                             "Parameters": {
                                                 "inputText": null
                                             }
-                                        }
-                                    }
-                                },
-                                {
-                                    "StartAt": "CheckInputBodyModelId",
-                                    "States": {
-                                        "CheckInputBodyModelId": {
-                                            "Type": "Choice",
-                                            "Choices": [
-                                                {
-                                                    "And": [
-                                                        {
-                                                            "Variable": "$.modelId",
-                                                            "IsPresent": true
-                                                        },
-                                                        {
-                                                            "Variable": "$.modelId",
-                                                            "IsString": true
-                                                        },
-                                                        {
-                                                            "And": [
-                                                                {
-                                                                    "Or": [
-                                                                        {
-                                                                            "Variable": "$.modelId",
-                                                                            "StringEquals": "amazon.titan-text-express-v1"
-                                                                        },
-                                                                        {
-                                                                            "Variable": "$.modelId",
-                                                                            "StringEquals": "amazon.titan-text-lite-v1"
-                                                                        },
-                                                                        {
-                                                                            "Variable": "$.modelId",
-                                                                            "StringEquals": "amazon.titan-text-premier-v1:0"
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ],
-                                                    "Next": "PassInputBodyModelId"
-                                                }
-                                            ],
-                                            "Default": "DefaultInputBodyModelId"
-                                        },
-                                        "PassInputBodyModelId": {
-                                            "Type": "Pass",
-                                            "End": true,
-                                            "InputPath": "$.modelId"
-                                        },
-                                        "DefaultInputBodyModelId": {
-                                            "Type": "Pass",
-                                            "Parameters": {
-                                                "modelId": "amazon.titan-text-premier-v1:0"
-                                            },
-                                            "Next": "PassInputBodyModelId"
                                         }
                                     }
                                 },
@@ -315,24 +251,8 @@
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
-                                                                    "And": [
-                                                                        {
-                                                                            "Variable": "$.stopSequences",
-                                                                            "IsPresent": true
-                                                                        },
-                                                                        {
-                                                                            "And": [
-                                                                                {
-                                                                                    "Variable": "$.stopSequences[0]",
-                                                                                    "IsPresent": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$.stopSequences[0]",
-                                                                                    "IsString": true
-                                                                                }
-                                                                            ]
-                                                                        }
-                                                                    ],
+                                                                    "Variable": "$.stopSequences",
+                                                                    "IsPresent": true,
                                                                     "Next": "MapBodyTextGenerationConfigStopSequences"
                                                                 }
                                                             ],
@@ -354,7 +274,7 @@
                                                                                     {
                                                                                         "Not": {
                                                                                             "Variable": "$",
-                                                                                            "IsNull": true
+                                                                                            "IsNumeric": true
                                                                                         }
                                                                                     },
                                                                                     {
@@ -551,8 +471,7 @@
                             "InputPath": "$.body",
                             "ResultSelector": {
                                 "inputText.$": "$[0]",
-                                "modelId.$": "$[1]",
-                                "textGenerationConfig.$": "$[2]"
+                                "textGenerationConfig.$": "$[1]"
                             },
                             "End": true
                         },
@@ -1102,8 +1021,9 @@
             "Resource": "arn:aws:states:::bedrock:invokeModel",
             "Parameters": {
                 "Body": {
-                    "inputText.$": "$.body.inputText",
-                    "textGenerationConfig.$": "$.body.textGenerationConfig"
+                    "imageGenerationConfig.$": "$.body.imageGenerationConfig",
+                    "taskType": "TEXT_IMAGE",
+                    "textToImageParams.$": "$.body.textToImageParams"
                 },
                 "ModelId.$": "$.body.modelId"
             },

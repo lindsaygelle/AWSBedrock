@@ -9,6 +9,19 @@ data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   }
 }
 
+data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_amazon_image_text_image" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
+    ]
+    effect = "Allow"
+    principals {
+      identifiers = ["states.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
 data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_amazon_text" {
   statement {
     actions = [
@@ -168,6 +181,16 @@ data "aws_iam_policy_document" "s3_bucket_log" {
       type        = "Service"
     }
     resources = ["${aws_s3_bucket.log.arn}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "sfn_state_machine_bedrock_amazon_image_text_image" {
+  statement {
+    actions = ["bedrock:InvokeModel"]
+    effect  = "Allow"
+    resources = [
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-image-generator-v1",
+    ]
   }
 }
 
