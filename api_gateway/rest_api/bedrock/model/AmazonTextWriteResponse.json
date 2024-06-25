@@ -13,8 +13,6 @@
                 "minItems": 0,
                 "properties": {
                     "completionReason": {
-                        "maxLength": 27,
-                        "minLength": 6,
                         "enum": [
                             "CONTENT_FILTERED",
                             "FINISHED",
