@@ -9,7 +9,20 @@ data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   }
 }
 
-data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_text" {
+data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_amazon_image_text_image" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
+    ]
+    effect = "Allow"
+    principals {
+      identifiers = ["states.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_amazon_text" {
   statement {
     actions = [
       "sts:AssumeRole"
@@ -44,7 +57,7 @@ data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
     ]
     effect = "Allow"
     resources = [
-      "${aws_sfn_state_machine.bedrock_text.arn}"
+      "${aws_sfn_state_machine.bedrock_amazon_text.arn}"
     ]
   }
 }
@@ -171,11 +184,25 @@ data "aws_iam_policy_document" "s3_bucket_log" {
   }
 }
 
-data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
+data "aws_iam_policy_document" "sfn_state_machine_bedrock_amazon_image_text_image" {
   statement {
-    actions   = ["bedrock:InvokeModel"]
-    effect    = "Allow"
-    resources = ["arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/*"]
+    actions = ["bedrock:InvokeModel"]
+    effect  = "Allow"
+    resources = [
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-image-generator-v1",
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "sfn_state_machine_bedrock_amazon_text" {
+  statement {
+    actions = ["bedrock:InvokeModel"]
+    effect  = "Allow"
+    resources = [
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-text-express-v1",
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-text-lite-v1",
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-text-premier-v1:0",
+    ]
   }
   statement {
     actions = [
@@ -192,16 +219,8 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
     ]
     effect = "Allow"
     resources = [
-      "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_text.arn}",
-    ]
-  }
-  statement {
-    actions = [
-      "sqs:SendMessage",
-    ]
-    effect = "Allow"
-    resources = [
-      "${aws_sqs_queue.api_gateway_rest_api.arn}"
+      "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_amazon_text.arn}",
+      "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_amazon_text.arn}*",
     ]
   }
   statement {
@@ -214,25 +233,6 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_text" {
     effect = "Allow"
     resources = [
       "*"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "sqs_queue_api_gateway_rest_api" {
-  statement {
-    actions = ["sqs:SendMessage"]
-    condition {
-      test     = "ArnLike"
-      values   = [aws_sfn_state_machine.bedrock_text.arn]
-      variable = "aws:SourceArn"
-    }
-    effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["states.amazonaws.com"]
-    }
-    resources = [
-      aws_sqs_queue.api_gateway_rest_api.arn
     ]
   }
 }

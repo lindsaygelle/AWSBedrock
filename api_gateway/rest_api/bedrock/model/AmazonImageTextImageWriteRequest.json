@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "properties": {
+        "imageGenerationConfig": {},
+        "textToImageParams": {
+            "properties": {
+                "negativeText": {
+                    "maxLength": 512,
+                    "minLength": 0,
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "text": {
+                    "maxLength": 512,
+                    "minLength": 0,
+                    "type": [
+                        "string"
+                    ]
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "type": [
+                "object"
+            ]
+        }
+    },
+    "title": "AmazonImageTextImageWriteRequest",
+    "type": [
+        "object"
+    ]
+}
