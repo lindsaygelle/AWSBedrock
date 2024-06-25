@@ -1,7 +1,63 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "properties": {
-        "imageGenerationConfig": {},
+        "imageGenerationConfig": {
+            "properties": {
+                "cfgScale": {
+                    "maximum": 10.0,
+                    "minimum": 1.1,
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "height": {
+                    "maximum": 1408,
+                    "minimum": 320,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "numberOfImages": {
+                    "maximum": 5,
+                    "minimum": 1,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "seed": {
+                    "maximum": 2147483646,
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "width": {
+                    "maximum": 1408,
+                    "minimum": 320,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                }
+            },
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "modelId": {
+            "enum": [
+                "amazon.titan-image-generator-v1"
+            ],
+            "type": [
+                "null",
+                "string"
+            ]
+        },
         "textToImageParams": {
             "properties": {
                 "negativeText": {
@@ -28,6 +84,9 @@
             ]
         }
     },
+    "required": [
+        "textToImageParams"
+    ],
     "title": "AmazonImageTextImageWriteRequest",
     "type": [
         "object"
