@@ -7,6 +7,17 @@
                 "string"
             ]
         },
+        "modelId": {
+            "enum": [
+                "amazon.titan-text-express-v1",
+                "amazon.titan-text-lite-v1",
+                "amazon.titan-text-premier-v1:0"
+            ],
+            "type": [
+                "null",
+                "string"
+            ]
+        },
         "textGenerationConfig": {
             "maxProperties": 4,
             "minProperties": 0,
@@ -58,7 +69,7 @@
     "required": [
         "inputText"
     ],
-    "title": "TextWriteRequest",
+    "title": "AmazonTextWriteRequest",
     "type": [
         "object"
     ]
