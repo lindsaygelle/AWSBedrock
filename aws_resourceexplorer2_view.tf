@@ -31,6 +31,28 @@ resource "aws_resourceexplorer2_view" "cloudwatch_log_group" {
   name = "${local.organization}-cloudwatch-log-group"
 }
 
+resource "aws_resourceexplorer2_view" "iam" {
+  depends_on = [aws_resourceexplorer2_index.main]
+  filters {
+    filter_string = "region:${data.aws_region.main.name} resourcetype:iam:* tag:organization=${local.organization}"
+  }
+  included_property {
+    name = "tags"
+  }
+  name = "${local.organization}-iam"
+}
+
+resource "aws_resourceexplorer2_view" "lambda_function" {
+  depends_on = [aws_resourceexplorer2_index.main]
+  filters {
+    filter_string = "region:${data.aws_region.main.name} resourcetype:lambda:function tag:organization=${local.organization}"
+  }
+  included_property {
+    name = "tags"
+  }
+  name = "${local.organization}-lambda-function"
+}
+
 resource "aws_resourceexplorer2_view" "s3_bucket" {
   depends_on = [aws_resourceexplorer2_index.main]
   filters {
