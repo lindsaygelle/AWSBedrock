@@ -10,7 +10,7 @@ resource "aws_lambda_function" "bedrock_amazon_image" {
   }
   filename      = data.archive_file.lambda_function_bedrock_amazon_image.output_path
   function_name = "${local.organization}-bedrock-amazon-image"
-  handler       = "main"
+  handler       = "main.main"
   image_uri     = null
   kms_key_arn   = null
   layers        = []
