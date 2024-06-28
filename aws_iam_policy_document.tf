@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   }
 }
 
-data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_amazon_titan_image" {
+data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_amazon_image" {
   statement {
     actions = [
       "sts:AssumeRole"
@@ -75,6 +75,48 @@ data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
     ]
   }
 }
+
+data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image" {
+  statement {
+    actions = ["bedrock:InvokeModel"]
+    effect  = "Allow"
+    resources = [
+      "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-image-generator-v1",
+    ]
+  }
+  statement {
+    actions = [
+      "logs:CreateLogDelivery",
+      "logs:CreateLogStream",
+      "logs:DeleteLogDelivery",
+      "logs:DescribeLogGroups",
+      "logs:DescribeResourcePolicies",
+      "logs:GetLogDelivery",
+      "logs:ListLogDeliveries",
+      "logs:PutLogEvents",
+      "logs:PutResourcePolicy",
+      "logs:UpdateLogDelivery",
+    ]
+    effect = "Allow"
+    resources = [
+      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image.arn}",
+      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image.arn}*",
+    ]
+  }
+  statement {
+    actions = [
+      "xray:GetSamplingRules",
+      "xray:GetSamplingTargets",
+      "xray:PutTelemetryRecords",
+      "xray:PutTraceSegments",
+    ]
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
+  }
+}
+
 
 data "aws_iam_policy_document" "s3_bucket_analytics" {
   statement {
@@ -204,6 +246,13 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_amazon_image_text_imag
     effect  = "Allow"
     resources = [
       "arn:aws:bedrock:${data.aws_region.main.name}::foundation-model/amazon.titan-image-generator-v1",
+    ]
+  }
+  statement {
+    actions = ["lambda:InvokeFunction"]
+    effect  = "Allow"
+    resources = [
+      "${aws_lambda_function.bedrock_amazon_image.arn}:${aws_lambda_alias.bedrock_amazon_image.function_version}"
     ]
   }
 }

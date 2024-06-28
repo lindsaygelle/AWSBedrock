@@ -5,9 +5,9 @@ resource "aws_iam_role" "api_gateway_rest_api_bedrock" {
   tags               = local.tags
 }
 
-resource "aws_iam_role" "lambda_function_bedrock_amazon_titan_image" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_function_bedrock_amazon_titan_image.json
-  name               = "${title(local.organization)}LambdaFunctionBedrockAmazonTitanImage"
+resource "aws_iam_role" "lambda_function_bedrock_amazon_image" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_function_bedrock_amazon_image.json
+  name               = "${title(local.organization)}LambdaFunctionBedrockAmazonImage"
   path               = "/${local.organization}/"
   tags               = local.tags
 }
