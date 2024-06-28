@@ -9,6 +9,19 @@ data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   }
 }
 
+data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_amazon_titan_image" {
+  statement {
+    actions = [
+      "sts:AssumeRole"
+    ]
+    effect = "Allow"
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
+  }
+}
+
 data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_amazon_image_text_image" {
   statement {
     actions = [
