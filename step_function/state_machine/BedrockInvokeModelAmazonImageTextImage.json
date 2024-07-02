@@ -1177,7 +1177,7 @@
                     }
                 }
             ],
-            "Next": "BedrockInvokeModel",
+            "Next": "LambdaInvokeBedrockAmazonImageTextImage",
             "ResultSelector": {
                 "accountId.$": "$[0]",
                 "apiId.$": "$[1]",
@@ -1204,148 +1204,32 @@
                 "webaclArn.$": "$[22]"
             }
         },
-        "BedrockInvokeModel": {
+        "LambdaInvokeBedrockAmazonImageTextImage": {
             "Type": "Task",
-            "Resource": "arn:aws:states:::bedrock:invokeModel",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
             "Parameters": {
-                "Body": {
+                "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}",
+                "Payload": {
                     "imageGenerationConfig.$": "$.body.imageGenerationConfig",
-                    "taskType": "TEXT_IMAGE",
+                    "modelId.$": "$.body.modelId",
                     "textToImageParams.$": "$.body.textToImageParams"
-                },
-                "ModelId.$": "$.body.modelId"
+                }
             },
-            "Next": "CheckOutput"
-        },
-        "CheckOutput": {
-            "Type": "Parallel",
-            "Next": "Output",
-            "Branches": [
+            "Retry": [
                 {
-                    "StartAt": "CheckOutputBody",
-                    "States": {
-                        "CheckOutputBody": {
-                            "Type": "Choice",
-                            "Choices": [
-                                {
-                                    "Variable": "$.Body",
-                                    "IsPresent": true,
-                                    "Next": "ParallelCheckOutputBody"
-                                }
-                            ],
-                            "Default": "DefaultOutputBody"
-                        },
-                        "ParallelCheckOutputBody": {
-                            "Type": "Parallel",
-                            "End": true,
-                            "Branches": [
-                                {
-                                    "StartAt": "CheckOutputBodyInputTextTokenCount",
-                                    "States": {
-                                        "CheckOutputBodyInputTextTokenCount": {
-                                            "Type": "Choice",
-                                            "Choices": [
-                                                {
-                                                    "Variable": "$.inputTextTokenCount",
-                                                    "IsPresent": true,
-                                                    "Next": "PassOutputBodyInputTextTokenCount"
-                                                }
-                                            ],
-                                            "Default": "DefaultOutputBodyInputTextTokenCount"
-                                        },
-                                        "PassOutputBodyInputTextTokenCount": {
-                                            "Type": "Pass",
-                                            "End": true,
-                                            "InputPath": "$.inputTextTokenCount"
-                                        },
-                                        "DefaultOutputBodyInputTextTokenCount": {
-                                            "Type": "Pass",
-                                            "Next": "PassOutputBodyInputTextTokenCount",
-                                            "Parameters": {
-                                                "inputTextTokenCount": null
-                                            }
-                                        }
-                                    }
-                                },
-                                {
-                                    "StartAt": "CheckOutputBodyResults",
-                                    "States": {
-                                        "CheckOutputBodyResults": {
-                                            "Type": "Choice",
-                                            "Choices": [
-                                                {
-                                                    "Variable": "$.results",
-                                                    "IsPresent": true,
-                                                    "Next": "PassOutputBodyResults"
-                                                }
-                                            ],
-                                            "Default": "DefaultOutputBodyResults"
-                                        },
-                                        "PassOutputBodyResults": {
-                                            "Type": "Pass",
-                                            "End": true,
-                                            "InputPath": "$.results"
-                                        },
-                                        "DefaultOutputBodyResults": {
-                                            "Type": "Pass",
-                                            "End": true,
-                                            "Parameters": {
-                                                "results": null
-                                            }
-                                        }
-                                    }
-                                }
-                            ],
-                            "InputPath": "$.Body",
-                            "ResultSelector": {
-                                "inputTextTokenCount.$": "$[0]",
-                                "results.$": "$[1]"
-                            }
-                        },
-                        "DefaultOutputBody": {
-                            "Type": "Pass",
-                            "Next": "ParallelCheckOutputBody",
-                            "Parameters": {
-                                "Body": {}
-                            }
-                        }
-                    }
-                },
-                {
-                    "StartAt": "CheckOutputContentType",
-                    "States": {
-                        "CheckOutputContentType": {
-                            "Type": "Choice",
-                            "Choices": [
-                                {
-                                    "Variable": "$.ContentType",
-                                    "IsPresent": true,
-                                    "Next": "PassOutputContentType"
-                                }
-                            ],
-                            "Default": "DefaultOutputContentType"
-                        },
-                        "PassOutputContentType": {
-                            "Type": "Pass",
-                            "End": true,
-                            "InputPath": "$.ContentType"
-                        },
-                        "DefaultOutputContentType": {
-                            "Type": "Pass",
-                            "Next": "PassOutputContentType"
-                        }
-                    }
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2
                 }
             ],
-            "ResultSelector": {
-                "Body.$": "$[0]",
-                "ContentType.$": "$[1]"
-            }
-        },
-        "Output": {
-            "Type": "Pass",
-            "Next": "Success",
-            "InputPath": "$.Body"
+            "Next": "Success"
         },
         "Success": {
             "Type": "Succeed"

@@ -105,6 +105,7 @@ data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image" {
   }
   statement {
     actions = [
+      "s3:HeadObject",
       "s3:PutObject"
     ]
     effect = "Allow"
