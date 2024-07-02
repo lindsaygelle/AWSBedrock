@@ -32,3 +32,10 @@ resource "aws_s3_bucket_versioning" "main" {
     status = "Disabled"
   }
 }
+
+resource "aws_s3_bucket_versioning" "public" {
+  bucket = aws_s3_bucket_acl.public.bucket
+  versioning_configuration {
+    status = "Disabled"
+  }
+}

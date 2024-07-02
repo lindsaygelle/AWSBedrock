@@ -105,6 +105,15 @@ data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image" {
   }
   statement {
     actions = [
+      "s3:PutObject"
+    ]
+    effect = "Allow"
+    resources = [
+      "${aws_s3_bucket.public.arn}/*"
+    ]
+  }
+  statement {
+    actions = [
       "xray:GetSamplingRules",
       "xray:GetSamplingTargets",
       "xray:PutTelemetryRecords",
@@ -237,6 +246,22 @@ data "aws_iam_policy_document" "s3_bucket_log" {
       type        = "Service"
     }
     resources = ["${aws_s3_bucket.log.arn}/*"]
+  }
+}
+
+data "aws_iam_policy_document" "s3_bucket_public" {
+  statement {
+    actions = [
+      "s3:GetObject"
+    ]
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    resources = [
+      "${aws_s3_bucket.public.arn}/*"
+    ]
   }
 }
 

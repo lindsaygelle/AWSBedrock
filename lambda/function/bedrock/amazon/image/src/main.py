@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from http import HTTPStatus
+from datetime import datetime
 from typing import (
     Any,
     AnyStr,
@@ -15,6 +16,8 @@ import base64
 import boto3
 import botocore
 import json
+import hashlib
+import os
 import uuid
 
 
@@ -53,9 +56,64 @@ class InvokeModelResponse(TypedDict):
 
 
 class PutObjectRequest(TypedDict):
-    Body: ByteString | bytearray
+    ACL: Literal[
+        "authenticated-read",
+        "aws-exec-read",
+        "bucket-owner-full-control",
+        "bucket-owner-read",
+        "private",
+        "public-read",
+        "public-read-write",
+    ]
+    Body: Union[ByteString]
     Bucket: str
+    BucketKeyEnabled: Optional[bool]
+    CacheControl: Optional[str]
+    ContentDisposition: Optional[str]
+    ContentEncoding: Optional[str]
+    ContentLanguage: Optional[str]
+    ContentLength: Optional[int]
+    ContentMD5: Optional[str]
+    ContentType: Optional[str]
+    ChecksumAlgorithm: Optional[Literal["CRC32", "CRC32C", "SHA1", "SHA256"]]
+    ChecksumCRC32: Optional[str]
+    ChecksumCRC32C: Optional[str]
+    ChecksumSHA1: Optional[str]
+    ChecksumSHA256: Optional[str]
+    ExpectedBucketOwner: Optional[str]
+    Expires: Optional[datetime]
+    GrantFullControl: Optional[str]
+    GrantRead: Optional[str]
+    GrantReadACP: Optional[str]
+    GrantWriteACP: Optional[str]
     Key: str
+    Metadata: Optional[Dict[str, Any]]
+    ServerSideEncryption: Optional[Literal["AES256", "aws:kms", "aws:kms:dsse"]]
+    StorageClass: Optional[
+        Literal[
+            "DEEP_ARCHIVE",
+            "EXPRESS_ONEZONE",
+            "GLACIER",
+            "GLACIER_IR",
+            "INTELLIGENT_TIERING",
+            "ONEZONE_IA",
+            "OUTPOSTS",
+            "REDUCED_REDUNDANCY",
+            "SNOW",
+            "STANDARD",
+            "STANDARD_IA",
+        ]
+    ]
+    SSECustomerAlgorithm: Optional[str]
+    SSECustomerKey: Optional[str]
+    SSEKMSEncryptionContext: Optional[str]
+    SSEKMSKeyId: Optional[str]
+    RequestPayer: Optional[Literal["requester"]]
+    Tagging: Optional[str]
+    ObjectLockLegalHoldStatus: Optional[Literal["OFF", "ON"]]
+    ObjectLockMode: Optional[Literal["COMPLIANCE", "GOVERNANCE"]]
+    ObjectLockRetainUntilDate: Optional[datetime]
+    WebsiteRedirectLocation: Optional[str]
 
 
 class EventBody(BodyTextImage):
@@ -81,7 +139,13 @@ class BedrockRuntime(ABC):
         guardrailIdentifier: Optional[str],
         guardrailVersion: Optional[str],
     ) -> InvokeModelResponse:
-        pass
+        raise NotImplementedError
+
+
+class S3Client(ABC):
+    @abstractmethod
+    def put_object() -> None:
+        raise NotImplementedError
 
 
 bedrock_runtime_client: BedrockRuntime = boto3.client(service_name="bedrock-runtime")
@@ -89,7 +153,9 @@ s3_client = boto3.client("s3")
 
 
 def main(event: Event, _):
-    invoke_model_request_model_id = event["modelId"]
+    s3_bucket_acl = os.environ["S3_BUCKET_ACL"]
+    s3_bucket_name = os.environ["S3_BUCKET_NAME"]
+    invoke_model_request_model_id = event["body"].pop("modelId")
     invoke_model_request_task_type = event["body"]["taskType"]
     invoke_model_request: InvokeModelRequest = {
         "accept": "application/json",
@@ -114,13 +180,20 @@ def main(event: Event, _):
     )
     for base64_image in response_body["images"]:
 
+        put_object_request_body: bytes = base64.b64decode(base64_image)
+
+        put_object_request_etag = hashlib.md5(put_object_request_body).hexdigest()
+
         put_object_request = PutObjectRequest(
-            Body=base64.b64decode(base64_image),
-            Bucket="",
-            Key="{}/{}/{}.png".format(
+            ACL=s3_bucket_acl,
+            Body=put_object_request_body,
+            Bucket=s3_bucket_name,
+            ContentLanguage="en-US",
+            ContentType="image/png",
+            Key="modelId={}/taskType={}/{}.png".format(
                 invoke_model_request_model_id,
                 invoke_model_request_task_type,
-                uuid.uuid4(),
+                put_object_request_etag,
             ),
         )
         put_object_response = s3_client.put_object(**put_object_request)
@@ -128,9 +201,13 @@ def main(event: Event, _):
 
 
 if __name__ == "__main__":
+    import random
+
+
     main(
         {
             "body": {
+                "modelId": "amazon.titan-image-generator-v1",
                 "taskType": "TEXT_IMAGE",
                 "textToImageParams": {
                     "text": "A photograph of a cup of coffee from the side"
@@ -140,10 +217,9 @@ if __name__ == "__main__":
                     "height": 512,
                     "width": 512,
                     "cfgScale": 8.0,
-                    "seed": 20000,
+                    "seed": random.randrange(0, 200000),
                 },
             },
-            "modelId": "amazon.titan-image-generator-v1",
         },
         None,
     )

@@ -32,3 +32,10 @@ resource "aws_s3_bucket" "main" {
   object_lock_enabled = null
   tags                = local.tags
 }
+
+resource "aws_s3_bucket" "public" {
+  bucket              = lower("${data.aws_caller_identity.main.account_id}-${local.organization}-public")
+  force_destroy       = true
+  object_lock_enabled = null
+  tags                = local.tags
+}
