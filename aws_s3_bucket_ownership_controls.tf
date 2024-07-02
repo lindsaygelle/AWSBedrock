@@ -32,3 +32,10 @@ resource "aws_s3_bucket_ownership_controls" "main" {
     object_ownership = "BucketOwnerPreferred"
   }
 }
+
+resource "aws_s3_bucket_ownership_controls" "public" {
+  bucket = aws_s3_bucket.public.bucket
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}

@@ -16,3 +16,8 @@ resource "aws_s3_bucket_policy" "log" {
   bucket = aws_s3_bucket_acl.log.bucket
   policy = data.aws_iam_policy_document.s3_bucket_log.json
 }
+
+resource "aws_s3_bucket_policy" "public" {
+  bucket = aws_s3_bucket_public_access_block.public.bucket
+  policy = data.aws_iam_policy_document.s3_bucket_public.json
+}

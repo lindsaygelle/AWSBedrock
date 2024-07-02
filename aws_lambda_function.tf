@@ -3,7 +3,10 @@ resource "aws_lambda_function" "bedrock_amazon_image" {
   code_signing_config_arn = null
   description             = null
   environment {
-
+    variables = {
+      S3_BUCKET_ACL  = aws_s3_bucket_acl.public.acl
+      S3_BUCKET_NAME = aws_s3_bucket.public.bucket
+    }
   }
   ephemeral_storage {
     size = 512
