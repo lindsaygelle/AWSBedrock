@@ -37,7 +37,7 @@ resource "aws_lambda_function" "bedrock_amazon_image" {
   skip_destroy                       = false
   source_code_hash                   = filebase64sha256(data.archive_file.lambda_function_bedrock_amazon_image.output_path)
   tags                               = local.tags
-  timeout                            = 10
+  timeout                            = 60 // 60 seconds
   tracing_config {
     mode = "PassThrough"
   }

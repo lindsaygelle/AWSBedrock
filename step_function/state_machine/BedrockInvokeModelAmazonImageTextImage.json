@@ -1212,7 +1212,7 @@
                 "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}",
                 "Payload": {
                     "imageGenerationConfig.$": "$.body.imageGenerationConfig",
-                    "modelId": "$.body.modelId",
+                    "modelId.$": "$.body.modelId",
                     "textToImageParams.$": "$.body.textToImageParams"
                 }
             },

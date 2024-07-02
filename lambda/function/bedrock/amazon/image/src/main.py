@@ -32,7 +32,7 @@ class AWSResponseMetadata(TypedDict):
     RetryAttempts: int
 
 
-class AmazonTextImageImageGenerationConfig(TypedDict):
+class AmazonTextImageimageGenerationConfig(TypedDict):
     cfgScale: float
     height: int
     numberOfImages: int
@@ -40,15 +40,15 @@ class AmazonTextImageImageGenerationConfig(TypedDict):
     width: int
 
 
-class AmazonTextImageTextToImageParams(TypedDict):
+class AmazonTextImagetextToImageParams(TypedDict):
     negativeText: Optional[str]
     text: str
 
 
 class AmazonTextImage(TypedDict):
-    imageGenerationConfig: AmazonTextImageImageGenerationConfig
+    imageGenerationConfig: AmazonTextImageimageGenerationConfig
     taskType: Literal["TEXT_IMAGE"]
-    textToImageParams: AmazonTextImageTextToImageParams
+    textToImageParams: AmazonTextImagetextToImageParams
 
 
 class BedrockRuntimeInvokeModelResponseMetadata(AWSResponseMetadata):
@@ -90,7 +90,7 @@ class BedrockRuntime(ABC):
         raise NotImplementedError
 
 
-class EventImageGenerationConfig(TypedDict):
+class EventimageGenerationConfig(TypedDict):
     cfgScale: float
     height: int
     numberOfImages: int
@@ -98,7 +98,7 @@ class EventImageGenerationConfig(TypedDict):
     width: int
 
 
-class EventTextToImageParams(TypedDict):
+class EventtextToImageParams(TypedDict):
     negativeText: Optional[str]
     text: str
 
@@ -360,7 +360,7 @@ def main(event: Event, _=None) -> LambdaResponse:
 
     if not (
         ("imageGenerationConfig" in event)
-        and (isinstance(event["imageGenerationConfig"], Dict))
+        and (isinstance(event["imageGenerationConfig"], dict))
     ):
         return LambdaResponse(
             Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
@@ -368,13 +368,19 @@ def main(event: Event, _=None) -> LambdaResponse:
 
     if not (
         ("textToImageParams" in event)
-        and (isinstance(event["textToImageParams"], Dict))
+        and (isinstance(event["textToImageParams"], dict))
     ):
         return LambdaResponse(
             Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
         )
 
-    if not ("modelId" in event):
+    if ("negativeText" in event["textToImageParams"]) and (
+        event["textToImageParams"]["negativeText"] is not None
+    ):
+        if len(event["textToImageParams"]["negativeText"]) < 3:
+            del event["textToImageParams"]["negativeText"]
+
+    if not (("modelId" in event) and (event["modelId"] is not None)):
         event["modelId"] = "amazon.titan-image-generator-v1"
 
     amazon_text_image: AmazonTextImage = AmazonTextImage(
@@ -382,6 +388,8 @@ def main(event: Event, _=None) -> LambdaResponse:
         taskType="TEXT_IMAGE",
         textToImageParams=event["textToImageParams"],
     )
+
+    print(amazon_text_image)
 
     try:
         bedrock_invoke_model_request_body: str = dumps(amazon_text_image)
@@ -393,6 +401,7 @@ def main(event: Event, _=None) -> LambdaResponse:
             accept="application/json",
             body=bedrock_invoke_model_request_body,
             contentType="application/json",
+            modelId=event["modelId"],
         )
     )
 
@@ -402,10 +411,10 @@ def main(event: Event, _=None) -> LambdaResponse:
         ]
     if "guardrailVersion" in event:
         bedrock_invoke_model_request["guardrailVersion"] = event["guardrailVersion"]
-    if "modelId" in event:
-        bedrock_invoke_model_request["modelId"] = event["modelId"]
     if "trace" in event:
         bedrock_invoke_model_request["trace"] = event["trace"]
+
+    print(bedrock_invoke_model_request)
 
     try:
         bedrock_invoke_model_response: BedrockRuntimeInvokeModelResponse = (
@@ -443,14 +452,18 @@ def main(event: Event, _=None) -> LambdaResponse:
             Bucket=environ["S3_BUCKET_NAME"],
             ContentLanguage="en-US",
             ContentType="image/png",
-            Key="modality=IMAGE/provider=AMAZON/model_id={}/task_type=TEXT_IMAGE/{}.png".format(
+            Key="MODALITY=IMAGE/PROVIDER=AMAZON/MODEL={}/TASK=TEXT_IMAGE/{}.png".format(
                 str.upper(event["modelId"]), md5(decoded_image).hexdigest()
             ),
         )
 
+        print(s3_put_object_request)
+
         s3_put_object_response: S3PutObjectResponse = s3_client.put_object(
             **s3_put_object_request
         )
+
+        print(s3_put_object_response)
 
         if not (
             s3_put_object_response["ResponseMetadata"]["HTTPStatusCode"]
@@ -462,9 +475,13 @@ def main(event: Event, _=None) -> LambdaResponse:
             Bucket=s3_put_object_request["Bucket"], Key=s3_put_object_request["Key"]
         )
 
+        print(s3_head_object_request)
+
         s3_head_object_response: S3HeadObjectResponse = s3_client.head_object(
             **s3_head_object_request
         )
+
+        print(s3_head_object_response)
 
         lambda_response_body_s3_object: LambdaResponseBodyS3Object = (
             LambdaResponseBodyS3Object(
@@ -474,12 +491,17 @@ def main(event: Event, _=None) -> LambdaResponse:
             )
         )
 
+        # TODO: Serialized response error with datetime.
+        lambda_response_body_s3_object["LastModified"] = str(
+            lambda_response_body_s3_object["LastModified"]
+        )
+
+        print(lambda_response_body_s3_object)
+
         lambda_response_body_s3_objects.append(lambda_response_body_s3_object)
 
     return LambdaResponse(
-        Body=LambdaResponseBody(
-            S3Objects=lambda_response_body_s3_objects
-        ),
+        Body=LambdaResponseBody(S3Objects=lambda_response_body_s3_objects),
         ContentType="application/json",
         StatusCode=HTTPStatus.OK,
     )
