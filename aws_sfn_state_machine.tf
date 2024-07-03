@@ -1,7 +1,7 @@
 resource "aws_sfn_state_machine" "bedrock_amazon_image_text_image" {
   definition = templatefile("./step_function/state_machine/BedrockInvokeModelAmazonImageTextImage.json", {
-    aws_lambda_function_arn           = aws_lambda_function.bedrock_amazon_image.arn
-    aws_lambda_alias_function_version = aws_lambda_alias.bedrock_amazon_image.function_version
+    aws_lambda_function_arn           = aws_lambda_function.bedrock_amazon_image_text_image.arn
+    aws_lambda_alias_function_version = aws_lambda_alias.bedrock_amazon_image_text_image.function_version
     aws_region                        = data.aws_region.main.name
   })
   /*
