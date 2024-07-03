@@ -6,9 +6,9 @@ resource "aws_cloudwatch_log_group" "api_gateway_rest_api_bedrock_latest" {
   tags              = local.tags
 }
 
-resource "aws_cloudwatch_log_group" "lambda_function_bedrock_amazon_image" {
+resource "aws_cloudwatch_log_group" "lambda_function_bedrock_amazon_image_text_image" {
   log_group_class   = "STANDARD"
-  name              = "/aws/lambda/${local.organization}-bedrock-amazon-image"
+  name              = "/aws/lambda/${local.organization}-bedrock-amazon-image-text-image"
   retention_in_days = 7
   skip_destroy      = false
   tags              = local.tags

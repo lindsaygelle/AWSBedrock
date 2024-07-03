@@ -19,20 +19,12 @@ from typing import (
     Union,
 )
 
-BedrockRuntimeTrace = Literal[
-    "DISABLED",
-    "ENABLED",
-]
+
+class AmazonTitanImageGeneratorV1Response(TypedDict):
+    images: List[AnyStr]
 
 
-class AWSResponseMetadata(TypedDict):
-    HTTPHeaders: Dict[str, str]
-    HTTPStatusCode: int
-    RequestId: str
-    RetryAttempts: int
-
-
-class AmazonTextImageimageGenerationConfig(TypedDict):
+class AmazonTitanImageGeneratorV1RequestImageGenerationConfig(TypedDict):
     cfgScale: float
     height: int
     numberOfImages: int
@@ -40,29 +32,35 @@ class AmazonTextImageimageGenerationConfig(TypedDict):
     width: int
 
 
-class AmazonTextImagetextToImageParams(TypedDict):
+class AmazonTitanImageGeneratorV1RequestTextToImageParams(TypedDict):
     negativeText: Optional[str]
     text: str
 
 
-class AmazonTextImage(TypedDict):
-    imageGenerationConfig: AmazonTextImageimageGenerationConfig
+class AmazonTitanImageGeneratorV1Request(TypedDict):
+    imageGenerationConfig: AmazonTitanImageGeneratorV1RequestImageGenerationConfig
     taskType: Literal["TEXT_IMAGE"]
-    textToImageParams: AmazonTextImagetextToImageParams
+    textToImageParams: AmazonTitanImageGeneratorV1RequestTextToImageParams
 
 
-class BedrockRuntimeInvokeModelResponseMetadata(AWSResponseMetadata):
-    pass
-
-
-class BedrockRuntimeInvokeModelResponseBody(TypedDict):
-    images: List[AnyStr]
+class BedrockRuntimeInvokeModelResponseMetadata(TypedDict):
+    HTTPHeaders: Dict[str, str]
+    HTTPStatusCode: int
+    RequestId: str
+    RetryAttempts: int
 
 
 class BedrockRuntimeInvokeModelResponse(TypedDict):
-    ResponseMetadata: AWSResponseMetadata
+    ResponseMetadata: BedrockRuntimeInvokeModelResponseMetadata
     body: StreamingBody
     contentType: str
+
+
+BedrockModelId = Literal["amazon.titan-image-generator-v1"]
+BedrockRuntimeTrace = Literal[
+    "DISABLED",
+    "ENABLED",
+]
 
 
 class BedrockRuntimeInvokeModelRequest(TypedDict):
@@ -90,24 +88,68 @@ class BedrockRuntime(ABC):
         raise NotImplementedError
 
 
-class EventimageGenerationConfig(TypedDict):
-    cfgScale: float
-    height: int
-    numberOfImages: int
-    seed: int
-    width: int
+class APIGatewayRequestAuthorizer(TypedDict):
+    claims: Dict[str, str]
+    principalId: str
+    property: str
 
 
-class EventtextToImageParams(TypedDict):
-    negativeText: Optional[str]
-    text: str
-
-
-class Event(AmazonTextImage):
+class APIGatewayRequestBody(TypedDict):
     guardrailIdentifier: Optional[str]
     guardrailVersion: Optional[str]
-    modelId: Optional[Literal["amazon.titan-image-generator-v1"]]
+    modelId: Optional[BedrockModelId]
     trace: Optional[BedrockRuntimeTrace]
+
+
+class APIGatewayRequestIdentity(TypedDict):
+    accountId: str
+    apiKey: str
+    apiKeyId: str
+    caller: str
+    cognitoAuthenticationProvider: str
+    cognitoAuthenticationType: str
+    cognitoIdentityId: str
+    cognitoIdentityPoolId: str
+    principalOrgId: str
+    sourceIp: str
+    user: str
+    userAgent: str
+    userArn: str
+    vpcId: str
+    vpceId: str
+
+
+class APIGatewayRequestRequestOverride(TypedDict):
+    header: Dict[str, str]
+    path: Dict[str, str]
+    querystring: Dict[str, str]
+
+
+class APIGatewayRequest(TypedDict):
+    accountId: str
+    apiId: str
+    authorizer: APIGatewayRequestAuthorizer
+    awsEndpointRequestId: str
+    body: APIGatewayRequestBody
+    deploymentId: str
+    domainName: str
+    domainPrefix: str
+    extendedRequestId: str
+    httpMethod: str
+    identity: APIGatewayRequestIdentity
+    isCanaryRequest: str
+    path: str
+    protocol: str
+    requestId: str
+    requestOverride: APIGatewayRequestRequestOverride
+    requestHeaders: Dict[str, str]
+    requestTime: str
+    requestTimeEpoch: str
+    resourceId: str
+    resourcePath: str
+    stage: str
+    wafResponseCode: str
+    webaclArn: str
 
 
 S3ObjectACL = Literal[
@@ -119,10 +161,15 @@ S3ObjectACL = Literal[
     "public-read",
     "public-read-write",
 ]
+S3ObjectArchieveStatus = Literal["ARCHIVE_ACCESS", "DEEP_ARCHIVE_ACCESS"]
 S3ObjectChecksumAlgorithm = Literal["CRC32", "CRC32C", "SHA1", "SHA256"]
+S3ObjectChecksumMode = Literal["ENABLED"]
 S3ObjectLockLegalHoldStatus = Literal["OFF", "ON"]
 S3ObjectLockMode = Literal["COMPLIANCE", "GOVERNANCE"]
 S3ObjectMetadata = Dict[str, str]
+S3ObjectReplicationStatus = Literal[
+    "COMPLETE", "COMPLETED", "FAILED", "PENDING", "REPLICA"
+]
 S3ObjectStorageClass = Literal[
     "DEEP_ARCHIVE",
     "EXPRESS_ONEZONE",
@@ -141,7 +188,7 @@ S3ObjectServerSideEncryption = Literal["AES256", "aws:kms", "aws:kms:dsse"]
 
 class S3HeadObjectRequest(TypedDict):
     Bucket: str
-    ChecksumMode: Optional[Literal["ENABLED"]]
+    ChecksumMode: Optional[S3ObjectChecksumMode]
     ExpectedBucketOwner: Optional[str]
     IfMatch: Optional[str]
     IfModifiedSince: Optional[datetime]
@@ -150,19 +197,22 @@ class S3HeadObjectRequest(TypedDict):
     Key: str
     PartNumber: Optional[int]
     Range: Optional[str]
-    RequestPayer: Optional[Literal["requester"]]
+    RequestPayer: Optional[str]
     SSECustomerAlgorithm: Optional[str]
     SSECustomerKey: Optional[str]
     VersionId: Optional[str]
 
 
-class S3HeadObjectResponseMetadata(AWSResponseMetadata):
-    pass
+class S3HeadObjectResponseMetadata(TypedDict):
+    HTTPHeaders: Dict[str, str]
+    HTTPStatusCode: int
+    RequestId: str
+    RetryAttempts: int
 
 
 class S3HeadObjectResponse(TypedDict):
     AcceptRanges: str
-    ArchiveStatus: Literal["ARCHIVE_ACCESS", "DEEP_ARCHIVE_ACCESS"]
+    ArchiveStatus: S3ObjectArchieveStatus
     BucketKeyEnabled: bool
     CacheControl: str
     ChecksumCRC32: str
@@ -185,7 +235,7 @@ class S3HeadObjectResponse(TypedDict):
     ObjectLockMode: S3ObjectLockMode
     ObjectLockRetainUntilDate: datetime
     PartsCount: int
-    ReplicationStatus: Literal["COMPLETE", "PENDING", "FAILED", "REPLICA", "COMPLETED"]
+    ReplicationStatus: S3ObjectReplicationStatus
     RequestCharged: str
     ResponseMetadata: S3HeadObjectResponseMetadata
     Restore: str
@@ -237,8 +287,11 @@ class S3PutObjectRequest(TypedDict):
     WebsiteRedirectLocation: Optional[str]
 
 
-class S3PutObjectResponseMetadata(AWSResponseMetadata):
-    pass
+class S3PutObjectResponseMetadata(TypedDict):
+    HTTPHeaders: Dict[str, str]
+    HTTPStatusCode: int
+    RequestId: str
+    RetryAttempts: int
 
 
 class S3PutObjectResponse(TypedDict):
@@ -273,10 +326,10 @@ class S3Client(ABC):
         VersionId: Optional[str],
         SSECustomerAlgorithm: Optional[str],
         SSECustomerKey: Optional[str],
-        RequestPayer: Optional[Literal["requester"]],
+        RequestPayer: Optional[str],
         PartNumber: Optional[int],
         ExpectedBucketOwner: Optional[str],
-        ChecksumMode: Optional[Literal["ENABLED"]],
+        ChecksumMode: Optional[S3ObjectChecksumMode],
     ) -> S3HeadObjectResponse:
         raise NotImplementedError
 
@@ -323,7 +376,7 @@ class S3Client(ABC):
         raise NotImplementedError
 
 
-class LambdaRequest(TypedDict):
+class LambdaRequest(APIGatewayRequest):
     pass
 
 
@@ -332,7 +385,7 @@ class LambdaResponseBodyS3Object(S3HeadObjectResponse):
     Key: str
 
 
-LambdaResponseBodyS3Objects = List[any]
+LambdaResponseBodyS3Objects = List[LambdaResponseBodyS3Object]
 
 
 class LambdaResponseBody(TypedDict):
@@ -349,7 +402,9 @@ bedrock_runtime: BedrockRuntime = client("bedrock-runtime")
 s3_client: S3Client = client("s3")
 
 
-def main(event: Event, _=None) -> LambdaResponse:
+def main(event: LambdaRequest, _=None) -> LambdaResponse:
+
+    print(event)
 
     if not isinstance(event, Dict):
         return LambdaResponse(
@@ -358,41 +413,49 @@ def main(event: Event, _=None) -> LambdaResponse:
             StatusCode=HTTPStatus.BAD_REQUEST,
         )
 
+    if not (("body" in event) and (isinstance(event["body"], dict))):
+        return LambdaResponse(
+            Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
+        )
+
+    body: APIGatewayRequestBody = event["body"]
+
+    print(body)
+
     if not (
-        ("imageGenerationConfig" in event)
-        and (isinstance(event["imageGenerationConfig"], dict))
+        ("imageGenerationConfig" in body)
+        and (isinstance(body["imageGenerationConfig"], dict))
     ):
         return LambdaResponse(
             Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
         )
 
     if not (
-        ("textToImageParams" in event)
-        and (isinstance(event["textToImageParams"], dict))
+        ("textToImageParams" in body) and (isinstance(body["textToImageParams"], dict))
     ):
         return LambdaResponse(
             Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
         )
 
-    if ("negativeText" in event["textToImageParams"]) and (
-        event["textToImageParams"]["negativeText"] is not None
-    ):
-        if len(event["textToImageParams"]["negativeText"]) < 3:
-            del event["textToImageParams"]["negativeText"]
+    if "negativeText" in body["textToImageParams"]:
+        if (body["textToImageParams"]["negativeText"] is None) or (
+            isinstance(body["textToImageParams"]["negativeText"], str)
+        ):
+            del body["textToImageParams"]["negativeText"]
 
-    if not (("modelId" in event) and (event["modelId"] is not None)):
-        event["modelId"] = "amazon.titan-image-generator-v1"
+    if not (("modelId" in body) and (body["modelId"] is not None)):
+        body["modelId"] = "amazon.titan-image-generator-v1"
 
-    amazon_text_image: AmazonTextImage = AmazonTextImage(
-        imageGenerationConfig=event["imageGenerationConfig"],
+    amazon_titan_image_generator_v1_request: AmazonTitanImageGeneratorV1Request = AmazonTitanImageGeneratorV1Request(
+        imageGenerationConfig=body["imageGenerationConfig"],
         taskType="TEXT_IMAGE",
-        textToImageParams=event["textToImageParams"],
+        textToImageParams=body["textToImageParams"],
     )
 
-    print(amazon_text_image)
+    print(amazon_titan_image_generator_v1_request)
 
     try:
-        bedrock_invoke_model_request_body: str = dumps(amazon_text_image)
+        bedrock_invoke_model_request_body: str = dumps(amazon_titan_image_generator_v1_request)
     except JSONDecodeError as e:
         raise e
 
@@ -401,18 +464,18 @@ def main(event: Event, _=None) -> LambdaResponse:
             accept="application/json",
             body=bedrock_invoke_model_request_body,
             contentType="application/json",
-            modelId=event["modelId"],
+            modelId=body["modelId"],
         )
     )
 
-    if "guardrailIdentifier" in event:
-        bedrock_invoke_model_request["guardrailIdentifier"] = event[
+    if "guardrailIdentifier" in body:
+        bedrock_invoke_model_request["guardrailIdentifier"] = body[
             "guardrailIdentifier"
         ]
-    if "guardrailVersion" in event:
-        bedrock_invoke_model_request["guardrailVersion"] = event["guardrailVersion"]
-    if "trace" in event:
-        bedrock_invoke_model_request["trace"] = event["trace"]
+    if "guardrailVersion" in body:
+        bedrock_invoke_model_request["guardrailVersion"] = body["guardrailVersion"]
+    if "trace" in body:
+        bedrock_invoke_model_request["trace"] = body["trace"]
 
     print(bedrock_invoke_model_request)
 
@@ -431,18 +494,18 @@ def main(event: Event, _=None) -> LambdaResponse:
         raise BotoCoreError()
 
     try:
-        bedrock_invoke_model_response_body: BedrockRuntimeInvokeModelResponseBody = (
-            loads(bedrock_invoke_model_response.get("body").read())
+        amazon_titan_image_generator_v1_response: AmazonTitanImageGeneratorV1Response = loads(
+            bedrock_invoke_model_response.get("body").read()
         )
     except JSONDecodeError as e:
         raise e
 
-    if not "images" in bedrock_invoke_model_response_body:
+    if not "images" in amazon_titan_image_generator_v1_response:
         raise KeyError("images")
 
     lambda_response_body_s3_objects: LambdaResponseBodyS3Objects = []
 
-    for base64_image in bedrock_invoke_model_response_body["images"]:
+    for base64_image in amazon_titan_image_generator_v1_response["images"]:
 
         decoded_image: bytes = b64decode(base64_image)
 
@@ -453,7 +516,7 @@ def main(event: Event, _=None) -> LambdaResponse:
             ContentLanguage="en-US",
             ContentType="image/png",
             Key="MODALITY=IMAGE/PROVIDER=AMAZON/MODEL={}/TASK=TEXT_IMAGE/{}.png".format(
-                str.upper(event["modelId"]), md5(decoded_image).hexdigest()
+                str.upper(body["modelId"]), md5(decoded_image).hexdigest()
             ),
         )
 

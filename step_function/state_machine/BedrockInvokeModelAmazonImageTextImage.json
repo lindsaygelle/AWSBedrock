@@ -149,76 +149,333 @@
                                         },
                                         "ParallelCheckInputBodyImageGenerationConfig": {
                                             "Type": "Parallel",
-                                            "End": true,
                                             "Branches": [
                                                 {
-                                                    "StartAt": "CheckInputBodyImageGenerationConfigNegativeText",
+                                                    "StartAt": "CheckInputBodyImageGenerationConfigCfgScale",
                                                     "States": {
-                                                        "CheckInputBodyImageGenerationConfigNegativeText": {
+                                                        "CheckInputBodyImageGenerationConfigCfgScale": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.cfgScale",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckInputBodyImageGenerationConfigCfgScaleValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigCfgScale"
+                                                        },
+                                                        "CheckInputBodyImageGenerationConfigCfgScaleValue": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "And": [
                                                                         {
-                                                                            "Variable": "$.negativeText",
-                                                                            "IsPresent": true
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
                                                                         },
                                                                         {
-                                                                            "Variable": "$.negativeText",
-                                                                            "IsString": true
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 1.1
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 10
+                                                                                }
+                                                                            ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassInputBodyImageGenerationConfigNegativeText"
+                                                                    "Next": "PassInputBodyImageGenerationConfigCfgScaleValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultInputBodyImageGenerationConfigNegativeText"
+                                                            "Default": "DefaultInputBodyImageGenerationConfigCfgScaleValue",
+                                                            "InputPath": "$.cfgScale"
                                                         },
-                                                        "PassInputBodyImageGenerationConfigNegativeText": {
+                                                        "PassInputBodyImageGenerationConfigCfgScaleValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigCfgScaleValue": {
                                                             "Type": "Pass",
                                                             "End": true,
-                                                            "InputPath": "$.negativeText"
+                                                            "Parameters": 1.1
                                                         },
-                                                        "DefaultInputBodyImageGenerationConfigNegativeText": {
+                                                        "DefaultInputBodyImageGenerationConfigCfgScale": {
                                                             "Type": "Pass",
-                                                            "Next": "PassInputBodyImageGenerationConfigNegativeText",
+                                                            "Next": "CheckInputBodyImageGenerationConfigCfgScaleValue",
                                                             "Parameters": {
-                                                                "negativeText": null
+                                                                "cfgScale": null
                                                             }
                                                         }
                                                     }
                                                 },
                                                 {
-                                                    "StartAt": "CheckInputBodyImageGenerationConfigText",
+                                                    "StartAt": "CheckInputBodyImageGenerationConfigHeight",
                                                     "States": {
-                                                        "CheckInputBodyImageGenerationConfigText": {
+                                                        "CheckInputBodyImageGenerationConfigHeight": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.height",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckInputBodyImageGenerationConfigHeightValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigHeight"
+                                                        },
+                                                        "CheckInputBodyImageGenerationConfigHeightValue": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "And": [
                                                                         {
-                                                                            "Variable": "$.text",
-                                                                            "IsPresent": true
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
                                                                         },
                                                                         {
-                                                                            "Variable": "$.text",
-                                                                            "IsString": true
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 320
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 1408
+                                                                                }
+                                                                            ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassInputBodyImageGenerationConfigText"
+                                                                    "Next": "PassInputBodyImageGenerationConfigHeightValue"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultInputBodyImageGenerationConfigText"
+                                                            "Default": "DefaultInputBodyImageGenerationConfigHeightValue",
+                                                            "InputPath": "$.height"
                                                         },
-                                                        "PassInputBodyImageGenerationConfigText": {
+                                                        "PassInputBodyImageGenerationConfigHeightValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigHeightValue": {
                                                             "Type": "Pass",
                                                             "End": true,
-                                                            "InputPath": "$.text"
+                                                            "Parameters": 320
                                                         },
-                                                        "DefaultInputBodyImageGenerationConfigText": {
+                                                        "DefaultInputBodyImageGenerationConfigHeight": {
                                                             "Type": "Pass",
-                                                            "Next": "PassInputBodyImageGenerationConfigText",
+                                                            "Next": "CheckInputBodyImageGenerationConfigHeightValue",
                                                             "Parameters": {
-                                                                "text": null
+                                                                "height": null
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckInputBodyImageGenerationConfigNumberOfImages",
+                                                    "States": {
+                                                        "CheckInputBodyImageGenerationConfigNumberOfImages": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.numberOfImages",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckInputBodyImageGenerationConfigNumberOfImagesValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigNumberOfImages"
+                                                        },
+                                                        "CheckInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 1
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 5
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassInputBodyImageGenerationConfigNumberOfImagesValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigNumberOfImagesValue",
+                                                            "InputPath": "$.numberOfImages"
+                                                        },
+                                                        "PassInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                                            "Type": "Pass",
+                                                            "End": true,
+                                                            "Parameters": 1
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigNumberOfImages": {
+                                                            "Type": "Pass",
+                                                            "Next": "CheckInputBodyImageGenerationConfigNumberOfImagesValue",
+                                                            "Parameters": {
+                                                                "numberOfImages": null
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckInputBodyImageGenerationConfigSeed",
+                                                    "States": {
+                                                        "CheckInputBodyImageGenerationConfigSeed": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.seed",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckInputBodyImageGenerationConfigSeedValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigSeed"
+                                                        },
+                                                        "CheckInputBodyImageGenerationConfigSeedValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 0
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 2147483646
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassInputBodyImageGenerationConfigSeedValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigSeedValue",
+                                                            "InputPath": "$.seed"
+                                                        },
+                                                        "PassInputBodyImageGenerationConfigSeedValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigSeedValue": {
+                                                            "Type": "Pass",
+                                                            "End": true,
+                                                            "Parameters": 0
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigSeed": {
+                                                            "Type": "Pass",
+                                                            "Next": "CheckInputBodyImageGenerationConfigSeedValue",
+                                                            "Parameters": {
+                                                                "seed": null
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "StartAt": "CheckInputBodyImageGenerationConfigWidth",
+                                                    "States": {
+                                                        "CheckInputBodyImageGenerationConfigWidth": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "Variable": "$.width",
+                                                                    "IsPresent": true,
+                                                                    "Next": "CheckInputBodyImageGenerationConfigWidthValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigWidth"
+                                                        },
+                                                        "CheckInputBodyImageGenerationConfigWidthValue": {
+                                                            "Type": "Choice",
+                                                            "Choices": [
+                                                                {
+                                                                    "And": [
+                                                                        {
+                                                                            "Not": {
+                                                                                "Variable": "$",
+                                                                                "IsNull": true
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "And": [
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "IsNumeric": true
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericGreaterThanEquals": 320
+                                                                                },
+                                                                                {
+                                                                                    "Variable": "$",
+                                                                                    "NumericLessThanEquals": 1408
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ],
+                                                                    "Next": "PassInputBodyImageGenerationConfigWidthValue"
+                                                                }
+                                                            ],
+                                                            "Default": "DefaultInputBodyImageGenerationConfigWidthValue",
+                                                            "InputPath": "$.width"
+                                                        },
+                                                        "PassInputBodyImageGenerationConfigWidthValue": {
+                                                            "Type": "Pass",
+                                                            "End": true
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigWidthValue": {
+                                                            "Type": "Pass",
+                                                            "End": true,
+                                                            "Parameters": 320
+                                                        },
+                                                        "DefaultInputBodyImageGenerationConfigWidth": {
+                                                            "Type": "Pass",
+                                                            "Next": "CheckInputBodyImageGenerationConfigWidthValue",
+                                                            "Parameters": {
+                                                                "width": null
                                                             }
                                                         }
                                                     }
@@ -226,16 +483,20 @@
                                             ],
                                             "InputPath": "$.imageGenerationConfig",
                                             "ResultSelector": {
-                                                "negativeText.$": "$[0]",
-                                                "text.$": "$[1]"
-                                            }
+                                                "cfgScale.$": "$[0]",
+                                                "height.$": "$[1]",
+                                                "numberOfImages.$": "$[2]",
+                                                "seed.$": "$[3]",
+                                                "width.$": "$[4]"
+                                            },
+                                            "End": true
                                         },
                                         "DefaultInputBodyImageGenerationConfig": {
                                             "Type": "Pass",
-                                            "Next": "ParallelCheckInputBodyImageGenerationConfig",
                                             "Parameters": {
                                                 "imageGenerationConfig": {}
-                                            }
+                                            },
+                                            "Next": "ParallelCheckInputBodyImageGenerationConfig"
                                         }
                                     }
                                 },
@@ -303,333 +564,84 @@
                                         },
                                         "ParallelCheckInputBodyTextToImageParams": {
                                             "Type": "Parallel",
+                                            "End": true,
                                             "Branches": [
                                                 {
-                                                    "StartAt": "CheckInputBodyTextToImageParamsCfgScale",
+                                                    "StartAt": "CheckInputBodyTextToImageParamsNegativeText",
                                                     "States": {
-                                                        "CheckInputBodyTextToImageParamsCfgScale": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "Variable": "$.cfgScale",
-                                                                    "IsPresent": true,
-                                                                    "Next": "CheckInputBodyTextToImageParamsCfgScaleValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsCfgScale"
-                                                        },
-                                                        "CheckInputBodyTextToImageParamsCfgScaleValue": {
+                                                        "CheckInputBodyTextToImageParamsNegativeText": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "And": [
                                                                         {
-                                                                            "Not": {
-                                                                                "Variable": "$",
-                                                                                "IsNull": true
-                                                                            }
+                                                                            "Variable": "$.negativeText ",
+                                                                            "IsPresent": true
                                                                         },
                                                                         {
                                                                             "And": [
                                                                                 {
-                                                                                    "Variable": "$",
-                                                                                    "IsNumeric": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 1.1
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 10
+                                                                                    "Variable": "$.negativeText ",
+                                                                                    "IsString": true
                                                                                 }
                                                                             ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassInputBodyTextToImageParamsCfgScaleValue"
+                                                                    "Next": "PassInputBodyTextToImageParamsNegativeText"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsCfgScaleValue",
-                                                            "InputPath": "$.cfgScale"
+                                                            "Default": "DefaultInputBodyTextToImageParamsNegativeText"
                                                         },
-                                                        "PassInputBodyTextToImageParamsCfgScaleValue": {
-                                                            "Type": "Pass",
-                                                            "End": true
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsCfgScaleValue": {
+                                                        "PassInputBodyTextToImageParamsNegativeText": {
                                                             "Type": "Pass",
                                                             "End": true,
-                                                            "Parameters": 1.1
+                                                            "InputPath": "$.negativeText"
                                                         },
-                                                        "DefaultInputBodyTextToImageParamsCfgScale": {
+                                                        "DefaultInputBodyTextToImageParamsNegativeText": {
                                                             "Type": "Pass",
-                                                            "Next": "CheckInputBodyTextToImageParamsCfgScaleValue",
+                                                            "Next": "PassInputBodyTextToImageParamsNegativeText",
                                                             "Parameters": {
-                                                                "cfgScale": null
+                                                                "negativeText": null
                                                             }
                                                         }
                                                     }
                                                 },
                                                 {
-                                                    "StartAt": "CheckInputBodyTextToImageParamsHeight",
+                                                    "StartAt": "CheckInputBodyTextToImageParamsText",
                                                     "States": {
-                                                        "CheckInputBodyTextToImageParamsHeight": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "Variable": "$.height",
-                                                                    "IsPresent": true,
-                                                                    "Next": "CheckInputBodyTextToImageParamsHeightValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsHeight"
-                                                        },
-                                                        "CheckInputBodyTextToImageParamsHeightValue": {
+                                                        "CheckInputBodyTextToImageParamsText": {
                                                             "Type": "Choice",
                                                             "Choices": [
                                                                 {
                                                                     "And": [
                                                                         {
-                                                                            "Not": {
-                                                                                "Variable": "$",
-                                                                                "IsNull": true
-                                                                            }
+                                                                            "Variable": "$.text",
+                                                                            "IsPresent": true
                                                                         },
                                                                         {
                                                                             "And": [
                                                                                 {
-                                                                                    "Variable": "$",
-                                                                                    "IsNumeric": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 320
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericLessThanEquals": 1408
+                                                                                    "Variable": "$.text",
+                                                                                    "IsString": true
                                                                                 }
                                                                             ]
                                                                         }
                                                                     ],
-                                                                    "Next": "PassInputBodyTextToImageParamsHeightValue"
+                                                                    "Next": "PassInputBodyTextToImageParamsText"
                                                                 }
                                                             ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsHeightValue",
-                                                            "InputPath": "$.height"
+                                                            "Default": "DefaultInputBodyTextToImageParamsText"
                                                         },
-                                                        "PassInputBodyTextToImageParamsHeightValue": {
-                                                            "Type": "Pass",
-                                                            "End": true
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsHeightValue": {
+                                                        "PassInputBodyTextToImageParamsText": {
                                                             "Type": "Pass",
                                                             "End": true,
-                                                            "Parameters": 320
+                                                            "InputPath": "$.text"
                                                         },
-                                                        "DefaultInputBodyTextToImageParamsHeight": {
+                                                        "DefaultInputBodyTextToImageParamsText": {
                                                             "Type": "Pass",
-                                                            "Next": "CheckInputBodyTextToImageParamsHeightValue",
+                                                            "Next": "PassInputBodyTextToImageParamsText",
                                                             "Parameters": {
-                                                                "height": null
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "StartAt": "CheckInputBodyTextToImageParamsNumberOfImages",
-                                                    "States": {
-                                                        "CheckInputBodyTextToImageParamsNumberOfImages": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "Variable": "$.numberOfImages",
-                                                                    "IsPresent": true,
-                                                                    "Next": "CheckInputBodyTextToImageParamsNumberOfImagesValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsNumberOfImages"
-                                                        },
-                                                        "CheckInputBodyTextToImageParamsNumberOfImagesValue": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "And": [
-                                                                        {
-                                                                            "Not": {
-                                                                                "Variable": "$",
-                                                                                "IsNull": true
-                                                                            }
-                                                                        },
-                                                                        {
-                                                                            "And": [
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "IsNumeric": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 1
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericLessThanEquals": 5
-                                                                                }
-                                                                            ]
-                                                                        }
-                                                                    ],
-                                                                    "Next": "PassInputBodyTextToImageParamsNumberOfImagesValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsNumberOfImagesValue",
-                                                            "InputPath": "$.numberOfImages"
-                                                        },
-                                                        "PassInputBodyTextToImageParamsNumberOfImagesValue": {
-                                                            "Type": "Pass",
-                                                            "End": true
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsNumberOfImagesValue": {
-                                                            "Type": "Pass",
-                                                            "End": true,
-                                                            "Parameters": 1
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsNumberOfImages": {
-                                                            "Type": "Pass",
-                                                            "Next": "CheckInputBodyTextToImageParamsNumberOfImagesValue",
-                                                            "Parameters": {
-                                                                "numberOfImages": null
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "StartAt": "CheckInputBodyTextToImageParamsSeed",
-                                                    "States": {
-                                                        "CheckInputBodyTextToImageParamsSeed": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "Variable": "$.seed",
-                                                                    "IsPresent": true,
-                                                                    "Next": "CheckInputBodyTextToImageParamsSeedValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsSeed"
-                                                        },
-                                                        "CheckInputBodyTextToImageParamsSeedValue": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "And": [
-                                                                        {
-                                                                            "Not": {
-                                                                                "Variable": "$",
-                                                                                "IsNull": true
-                                                                            }
-                                                                        },
-                                                                        {
-                                                                            "And": [
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "IsNumeric": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 0
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericLessThanEquals": 2147483646
-                                                                                }
-                                                                            ]
-                                                                        }
-                                                                    ],
-                                                                    "Next": "PassInputBodyTextToImageParamsSeedValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsSeedValue",
-                                                            "InputPath": "$.seed"
-                                                        },
-                                                        "PassInputBodyTextToImageParamsSeedValue": {
-                                                            "Type": "Pass",
-                                                            "End": true
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsSeedValue": {
-                                                            "Type": "Pass",
-                                                            "End": true,
-                                                            "Parameters": 0
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsSeed": {
-                                                            "Type": "Pass",
-                                                            "Next": "CheckInputBodyTextToImageParamsSeedValue",
-                                                            "Parameters": {
-                                                                "seed": null
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "StartAt": "CheckInputBodyTextToImageParamsWidth",
-                                                    "States": {
-                                                        "CheckInputBodyTextToImageParamsWidth": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "Variable": "$.width",
-                                                                    "IsPresent": true,
-                                                                    "Next": "CheckInputBodyTextToImageParamsWidthValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsWidth"
-                                                        },
-                                                        "CheckInputBodyTextToImageParamsWidthValue": {
-                                                            "Type": "Choice",
-                                                            "Choices": [
-                                                                {
-                                                                    "And": [
-                                                                        {
-                                                                            "Not": {
-                                                                                "Variable": "$",
-                                                                                "IsNull": true
-                                                                            }
-                                                                        },
-                                                                        {
-                                                                            "And": [
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "IsNumeric": true
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericGreaterThanEquals": 320
-                                                                                },
-                                                                                {
-                                                                                    "Variable": "$",
-                                                                                    "NumericLessThanEquals": 1408
-                                                                                }
-                                                                            ]
-                                                                        }
-                                                                    ],
-                                                                    "Next": "PassInputBodyTextToImageParamsWidthValue"
-                                                                }
-                                                            ],
-                                                            "Default": "DefaultInputBodyTextToImageParamsWidthValue",
-                                                            "InputPath": "$.width"
-                                                        },
-                                                        "PassInputBodyTextToImageParamsWidthValue": {
-                                                            "Type": "Pass",
-                                                            "End": true
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsWidthValue": {
-                                                            "Type": "Pass",
-                                                            "End": true,
-                                                            "Parameters": 320
-                                                        },
-                                                        "DefaultInputBodyTextToImageParamsWidth": {
-                                                            "Type": "Pass",
-                                                            "Next": "CheckInputBodyTextToImageParamsWidthValue",
-                                                            "Parameters": {
-                                                                "width": null
+                                                                "text": null
                                                             }
                                                         }
                                                     }
@@ -637,20 +649,16 @@
                                             ],
                                             "InputPath": "$.textToImageParams",
                                             "ResultSelector": {
-                                                "cfgScale.$": "$[0]",
-                                                "height.$": "$[1]",
-                                                "numberOfImages.$": "$[2]",
-                                                "seed.$": "$[3]",
-                                                "width.$": "$[4]"
-                                            },
-                                            "End": true
+                                                "negativeText.$": "$[0]",
+                                                "text.$": "$[1]"
+                                            }
                                         },
                                         "DefaultInputBodyTextToImageParams": {
                                             "Type": "Pass",
+                                            "Next": "ParallelCheckInputBodyTextToImageParams",
                                             "Parameters": {
                                                 "textToImageParams": {}
-                                            },
-                                            "Next": "ParallelCheckInputBodyTextToImageParams"
+                                            }
                                         }
                                     }
                                 }
@@ -1210,11 +1218,7 @@
             "OutputPath": "$.Payload",
             "Parameters": {
                 "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}",
-                "Payload": {
-                    "imageGenerationConfig.$": "$.body.imageGenerationConfig",
-                    "modelId.$": "$.body.modelId",
-                    "textToImageParams.$": "$.body.textToImageParams"
-                }
+                "Payload.$": "$"
             },
             "Retry": [
                 {

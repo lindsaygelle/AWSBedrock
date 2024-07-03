@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "assume_role_api_gateway_bedrock" {
   }
 }
 
-data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_amazon_image" {
+data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_amazon_image_text_image" {
   statement {
     actions = [
       "sts:AssumeRole"
@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image" {
+data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image_text_image" {
   statement {
     actions = ["bedrock:InvokeModel"]
     effect  = "Allow"
@@ -99,8 +99,8 @@ data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image" {
     ]
     effect = "Allow"
     resources = [
-      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image.arn}",
-      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image.arn}*",
+      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image_text_image.arn}",
+      "${aws_cloudwatch_log_group.lambda_function_bedrock_amazon_image_text_image.arn}*",
     ]
   }
   statement {
@@ -278,7 +278,7 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_amazon_image_text_imag
     actions = ["lambda:InvokeFunction"]
     effect  = "Allow"
     resources = [
-      "${aws_lambda_function.bedrock_amazon_image.arn}:${aws_lambda_alias.bedrock_amazon_image.function_version}"
+      "${aws_lambda_function.bedrock_amazon_image_text_image.arn}:${aws_lambda_alias.bedrock_amazon_image_text_image.function_version}"
     ]
   }
 }
