@@ -579,7 +579,9 @@ def main(api_gateway_request: APIGatewayRequest, _=None) -> LambdaResponse:
             s3_bucket_acl: Optional[str] = environ["S3_BUCKET_ACL"]
             s3_bucket_folder: Optional[str] = environ["S3_BUCKET_FOLDER"]
             s3_bucket_name: Optional[str] = environ["S3_BUCKET_NAME"]
-            s3_object_key = path.join(s3_bucket_folder, decoded_image_md5_hexdigest) + ".png"
+            s3_object_key = (
+                path.join(s3_bucket_folder, decoded_image_md5_hexdigest) + ".png"
+            )
 
             s3_put_object_request = S3PutObjectRequest(
                 ACL=s3_bucket_acl,

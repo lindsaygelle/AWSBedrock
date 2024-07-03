@@ -13,11 +13,12 @@
             #set($s3ObjectContentType = $s3Object.get("ContentType"))
             #set($s3ObjectKey = $s3Object.get("Key"))
             #set($s3ObjectLastModified = $s3Object.get("LastModified"))
+            #set($s3ObjectURL = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
 
             "contentLength": "$s3ObjectContentLength",
             "contentType": "$s3ObjectContentType",
             "lastModified": "$s3ObjectLastModified",
-            "url": "https://#{s3ObjectBucket}.s3.amazonaws.com/#{s3ObjectKey}"
+            "url": "$s3ObjectURL"
         }#if($foreach.hasNext),#end
         #end
     #end
