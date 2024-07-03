@@ -1,2 +1,26 @@
-#set($responseBody = $util.parseJson($input.body))
-$responseBody
+#set($inputBody = $util.parseJson($input.body))
+#set($output = $util.parseJson($inputBody.get("output")))
+{
+    "images": [
+#if($output.get("Body"))
+    #set($outputBody = $output.Body)
+    #if($outputBody.get("Objects"))
+        #set($s3Objects = $outputBody.Objects)
+        #foreach($s3Object in $s3Objects)
+        {
+            #set($s3ObjectBucket = $s3Object.get("Bucket"))
+            #set($s3ObjectContentLength = $s3Object.get("ContentLength"))
+            #set($s3ObjectContentType = $s3Object.get("ContentType"))
+            #set($s3ObjectKey = $s3Object.get("Key"))
+            #set($s3ObjectLastModified = $s3Object.get("LastModified"))
+
+            "contentLength": "$s3ObjectContentLength",
+            "contentType": "$s3ObjectContentType",
+            "lastModified": "$s3ObjectLastModified",
+            "url": "https://#{s3ObjectBucket}.s3.amazonaws.com/#{s3ObjectKey}"
+        }#if($foreach.hasNext),#end
+        #end
+    #end
+#end
+    ]
+}

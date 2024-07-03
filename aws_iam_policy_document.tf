@@ -110,7 +110,7 @@ data "aws_iam_policy_document" "lambda_function_bedrock_amazon_image_text_image"
     ]
     effect = "Allow"
     resources = [
-      "${aws_s3_bucket.public.arn}/*"
+      "${aws_s3_bucket.public.arn}/${aws_s3_object.public_amazon_image_text_image.key}*"
     ]
   }
   statement {

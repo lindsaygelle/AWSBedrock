@@ -4,8 +4,9 @@ resource "aws_lambda_function" "bedrock_amazon_image_text_image" {
   description             = null
   environment {
     variables = {
-      S3_BUCKET_ACL  = aws_s3_bucket_acl.public.acl
-      S3_BUCKET_NAME = aws_s3_bucket.public.bucket
+      S3_BUCKET_ACL    = aws_s3_bucket_acl.public.acl
+      S3_BUCKET_FOLDER = aws_s3_object.public_amazon_image_text_image.key
+      S3_BUCKET_NAME   = aws_s3_bucket.public.bucket
     }
   }
   ephemeral_storage {
@@ -37,7 +38,7 @@ resource "aws_lambda_function" "bedrock_amazon_image_text_image" {
   skip_destroy                       = false
   source_code_hash                   = filebase64sha256(data.archive_file.lambda_function_bedrock_amazon_image_text_image.output_path)
   tags                               = local.tags
-  timeout                            = 60 // 60 seconds
+  timeout                            = 60 * 5
   tracing_config {
     mode = "PassThrough"
   }

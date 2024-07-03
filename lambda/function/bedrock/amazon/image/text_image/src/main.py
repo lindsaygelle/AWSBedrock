@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 from base64 import b64decode
+from binascii import Error as BinAsciiError
 from boto3 import client
-from botocore.exceptions import BotoCoreError
+from botocore.exceptions import BotoCoreError, ClientError
 from botocore.response import StreamingBody
 from datetime import datetime
 from hashlib import md5
 from http import HTTPStatus
 from json import JSONDecodeError, dumps, loads
-from os import environ
+from os import environ, path
 from typing import (
     AnyStr,
     ByteString,
@@ -94,13 +95,6 @@ class APIGatewayRequestAuthorizer(TypedDict):
     property: str
 
 
-class APIGatewayRequestBody(TypedDict):
-    guardrailIdentifier: Optional[str]
-    guardrailVersion: Optional[str]
-    modelId: Optional[BedrockModelId]
-    trace: Optional[BedrockRuntimeTrace]
-
-
 class APIGatewayRequestIdentity(TypedDict):
     accountId: str
     apiKey: str
@@ -130,7 +124,7 @@ class APIGatewayRequest(TypedDict):
     apiId: str
     authorizer: APIGatewayRequestAuthorizer
     awsEndpointRequestId: str
-    body: APIGatewayRequestBody
+    body: any
     deploymentId: str
     domainName: str
     domainPrefix: str
@@ -312,6 +306,11 @@ class S3PutObjectResponse(TypedDict):
     VersionId: Optional[str]
 
 
+class S3Object(S3HeadObjectResponse):
+    Bucket: str
+    Key: str
+
+
 class S3Client(ABC):
     @abstractmethod
     def head_object(
@@ -376,20 +375,21 @@ class S3Client(ABC):
         raise NotImplementedError
 
 
-class LambdaRequest(APIGatewayRequest):
-    pass
-
-
-class LambdaResponseBodyS3Object(S3HeadObjectResponse):
+class LambdaResponseBodyObject(TypedDict):
     Bucket: str
     Key: str
 
 
-LambdaResponseBodyS3Objects = List[LambdaResponseBodyS3Object]
-
-
 class LambdaResponseBody(TypedDict):
-    S3Objects: LambdaResponseBodyS3Objects
+    Error: Optional[
+        Literal[
+            "INVALID_BEDROCK_REQUEST",
+            "INVALID_BEDROCK_RESPONSE",
+            "INVALID_LAMBDA_REQUEST",
+            "RUNTIME_EXCEPTION",
+        ]
+    ]
+    Objects: Optional[List[LambdaResponseBodyObject]]
 
 
 class LambdaResponse(TypedDict):
@@ -402,169 +402,235 @@ bedrock_runtime: BedrockRuntime = client("bedrock-runtime")
 s3_client: S3Client = client("s3")
 
 
-def main(event: LambdaRequest, _=None) -> LambdaResponse:
+def main(api_gateway_request: APIGatewayRequest, _=None) -> LambdaResponse:
 
-    print(event)
-
-    if not isinstance(event, Dict):
+    if not isinstance(api_gateway_request, dict):
         return LambdaResponse(
-            Body=None,
-            ContentType="application/json",
+            Body=LambdaResponseBody(
+                Error="INVALID_LAMBDA_REQUEST",
+            ),
             StatusCode=HTTPStatus.BAD_REQUEST,
         )
 
-    if not (("body" in event) and (isinstance(event["body"], dict))):
+    if not ("body" in api_gateway_request):
         return LambdaResponse(
-            Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
+            Body=LambdaResponseBody(
+                Error="INVALID_LAMBDA_REQUEST",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
         )
 
-    body: APIGatewayRequestBody = event["body"]
+    api_gateway_request_body = api_gateway_request["body"]
 
-    print(body)
+    print(api_gateway_request_body)
+
+    if not (isinstance(api_gateway_request_body, dict)):
+        return LambdaResponse(
+            Body=LambdaResponseBody(
+                Error="INVALID_LAMBDA_REQUEST",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
+        )
+
+    if not ("imageGenerationConfig" in api_gateway_request_body):
+        raise KeyError("imageGenerationConfig")
+
+    amazon_titan_image_generator_v1_request_image_generation_config: (
+        AmazonTitanImageGeneratorV1RequestImageGenerationConfig
+    ) = api_gateway_request_body["imageGenerationConfig"]
+
+    print(amazon_titan_image_generator_v1_request_image_generation_config)
 
     if not (
-        ("imageGenerationConfig" in body)
-        and (isinstance(body["imageGenerationConfig"], dict))
+        isinstance(
+            amazon_titan_image_generator_v1_request_image_generation_config, dict
+        )
     ):
         return LambdaResponse(
-            Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
+            Body=LambdaResponseBody(
+                Error="INVALID_LAMBDA_REQUEST",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
         )
+
+    if not ("textToImageParams" in api_gateway_request_body):
+        raise KeyError("textToImageParams")
+
+    amazon_titan_image_generator_v1_request_text_to_image_params: (
+        AmazonTitanImageGeneratorV1RequestTextToImageParams
+    ) = api_gateway_request_body["textToImageParams"]
+
+    print(amazon_titan_image_generator_v1_request_text_to_image_params)
 
     if not (
-        ("textToImageParams" in body) and (isinstance(body["textToImageParams"], dict))
+        isinstance(amazon_titan_image_generator_v1_request_text_to_image_params, dict)
     ):
         return LambdaResponse(
-            Body=None, ContentType="application/json", StatusCode=HTTPStatus.BAD_REQUEST
+            Body=LambdaResponseBody(
+                Error="INVALID_LAMBDA_REQUEST",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
         )
 
-    if "negativeText" in body["textToImageParams"]:
-        if (body["textToImageParams"]["negativeText"] is None) or (
-            isinstance(body["textToImageParams"]["negativeText"], str)
+    if "negativeText" in amazon_titan_image_generator_v1_request_text_to_image_params:
+        if (
+            amazon_titan_image_generator_v1_request_text_to_image_params["negativeText"]
+            is None
         ):
-            del body["textToImageParams"]["negativeText"]
+            del amazon_titan_image_generator_v1_request_text_to_image_params[
+                "negativeText"
+            ]
 
-    if not (("modelId" in body) and (body["modelId"] is not None)):
-        body["modelId"] = "amazon.titan-image-generator-v1"
-
-    amazon_titan_image_generator_v1_request: AmazonTitanImageGeneratorV1Request = AmazonTitanImageGeneratorV1Request(
-        imageGenerationConfig=body["imageGenerationConfig"],
+    amazon_titan_image_generator_v1_request = AmazonTitanImageGeneratorV1Request(
+        imageGenerationConfig=amazon_titan_image_generator_v1_request_image_generation_config,
         taskType="TEXT_IMAGE",
-        textToImageParams=body["textToImageParams"],
+        textToImageParams=amazon_titan_image_generator_v1_request_text_to_image_params,
     )
 
     print(amazon_titan_image_generator_v1_request)
 
-    try:
-        bedrock_invoke_model_request_body: str = dumps(amazon_titan_image_generator_v1_request)
-    except JSONDecodeError as e:
-        raise e
-
-    bedrock_invoke_model_request: BedrockRuntimeInvokeModelRequest = (
-        BedrockRuntimeInvokeModelRequest(
-            accept="application/json",
-            body=bedrock_invoke_model_request_body,
-            contentType="application/json",
-            modelId=body["modelId"],
-        )
+    bedrock_runtime_invoke_model_request_model_id = api_gateway_request_body.get(
+        "modelId", "amazon.titan-image-generator-v1"
     )
 
-    if "guardrailIdentifier" in body:
-        bedrock_invoke_model_request["guardrailIdentifier"] = body[
-            "guardrailIdentifier"
-        ]
-    if "guardrailVersion" in body:
-        bedrock_invoke_model_request["guardrailVersion"] = body["guardrailVersion"]
-    if "trace" in body:
-        bedrock_invoke_model_request["trace"] = body["trace"]
-
-    print(bedrock_invoke_model_request)
-
     try:
-        bedrock_invoke_model_response: BedrockRuntimeInvokeModelResponse = (
-            bedrock_runtime.invoke_model(**bedrock_invoke_model_request)
-        )
-    except BotoCoreError as e:
-        raise e
-
-    bedrock_invoke_model_response_metadata: (
-        BedrockRuntimeInvokeModelResponseMetadata
-    ) = bedrock_invoke_model_response["ResponseMetadata"]
-
-    if not (bedrock_invoke_model_response_metadata["HTTPStatusCode"] == HTTPStatus.OK):
-        raise BotoCoreError()
-
-    try:
-        amazon_titan_image_generator_v1_response: AmazonTitanImageGeneratorV1Response = loads(
-            bedrock_invoke_model_response.get("body").read()
+        bedrock_runtime_invoke_model_request_body = dumps(
+            amazon_titan_image_generator_v1_request
         )
     except JSONDecodeError as e:
-        raise e
 
-    if not "images" in amazon_titan_image_generator_v1_response:
-        raise KeyError("images")
+        print(e)
 
-    lambda_response_body_s3_objects: LambdaResponseBodyS3Objects = []
+        return LambdaResponse(
+            Body=LambdaResponseBody(
+                Error="RUNTIME_EXCEPTION",
+            ),
+            StatusCode=HTTPStatus.INTERNAL_SERVER_ERROR,
+        )
+
+    bedrock_runtime_invoke_model_request = BedrockRuntimeInvokeModelRequest(
+        accept="application/json",
+        body=bedrock_runtime_invoke_model_request_body,
+        contentType="application/json",
+        modelId=bedrock_runtime_invoke_model_request_model_id,
+    )
+
+    try:
+        bedrock_runtime_invoke_model_response = bedrock_runtime.invoke_model(
+            **bedrock_runtime_invoke_model_request
+        )
+    except ClientError as e:
+
+        print(e)
+
+        return LambdaResponse(
+            Body=LambdaResponseBody(
+                Error="INVALID_BEDROCK_REQUEST",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
+        )
+
+    bedrock_runtime_invoke_model_response_metadata = (
+        bedrock_runtime_invoke_model_response["ResponseMetadata"]
+    )
+
+    if (
+        bedrock_runtime_invoke_model_response_metadata["HTTPStatusCode"]
+        != HTTPStatus.OK
+    ):
+        return LambdaResponse(
+            Body=LambdaResponseBody(
+                Error="INVALID_BEDROCK_RESPONSE",
+            ),
+            StatusCode=HTTPStatus.BAD_REQUEST,
+        )
+
+    try:
+        amazon_titan_image_generator_v1_response: (
+            AmazonTitanImageGeneratorV1Response
+        ) = loads(bedrock_runtime_invoke_model_response["body"].read())
+    except JSONDecodeError as e:
+
+        print(e)
+
+        return LambdaResponse(
+            Body=LambdaResponseBody(
+                Error="RUNTIME_EXCEPTION",
+            ),
+            StatusCode=HTTPStatus.INTERNAL_SERVER_ERROR,
+        )
+
+    s3_objects: List[S3Object] = []
 
     for base64_image in amazon_titan_image_generator_v1_response["images"]:
 
-        decoded_image: bytes = b64decode(base64_image)
+        try:
+            decoded_image = b64decode(base64_image)
 
-        s3_put_object_request: S3PutObjectRequest = S3PutObjectRequest(
-            ACL=environ["S3_BUCKET_ACL"],
-            Body=decoded_image,
-            Bucket=environ["S3_BUCKET_NAME"],
-            ContentLanguage="en-US",
-            ContentType="image/png",
-            Key="MODALITY=IMAGE/PROVIDER=AMAZON/MODEL={}/TASK=TEXT_IMAGE/{}.png".format(
-                str.upper(body["modelId"]), md5(decoded_image).hexdigest()
-            ),
-        )
+            try:
+                decoded_image_md5 = md5(decoded_image)
+                decoded_image_md5_hexdigest = decoded_image_md5.hexdigest()
 
-        print(s3_put_object_request)
+            except TypeError as e:
+                # TODO: Add an error
+                print(e)
+                continue
 
-        s3_put_object_response: S3PutObjectResponse = s3_client.put_object(
-            **s3_put_object_request
-        )
+            s3_bucket_acl: Optional[str] = environ["S3_BUCKET_ACL"]
+            s3_bucket_folder: Optional[str] = environ["S3_BUCKET_FOLDER"]
+            s3_bucket_name: Optional[str] = environ["S3_BUCKET_NAME"]
+            s3_object_key = path.join(s3_bucket_folder, decoded_image_md5_hexdigest)
 
-        print(s3_put_object_response)
+            s3_put_object_request = S3PutObjectRequest(
+                ACL=s3_bucket_acl,
+                Body=decoded_image,
+                Bucket=s3_bucket_name,
+                ContentLanguage="en-US",
+                ContentLength=len(decoded_image),
+                ContentType="image/png",
+                Key=s3_object_key,
+            )
 
-        if not (
-            s3_put_object_response["ResponseMetadata"]["HTTPStatusCode"]
-            == HTTPStatus.OK
-        ):
-            continue
+            try:
+                s3_put_object_response = s3_client.put_object(**s3_put_object_request)
 
-        s3_head_object_request: S3HeadObjectRequest = S3HeadObjectRequest(
-            Bucket=s3_put_object_request["Bucket"], Key=s3_put_object_request["Key"]
-        )
+                print(s3_put_object_response)
 
-        print(s3_head_object_request)
+            except ClientError as e:
+                # TODO: Add an error
+                print(e)
+                continue
 
-        s3_head_object_response: S3HeadObjectResponse = s3_client.head_object(
-            **s3_head_object_request
-        )
+            s3_head_object_request = S3HeadObjectRequest(
+                Bucket=s3_bucket_name, Key=s3_object_key
+            )
+            try:
+                s3_head_object_response = s3_client.head_object(
+                    **s3_head_object_request
+                )
+            except ClientError as e:
+                print(e)
+                continue
 
-        print(s3_head_object_response)
-
-        lambda_response_body_s3_object: LambdaResponseBodyS3Object = (
-            LambdaResponseBodyS3Object(
+            s3_object = S3Object(
                 Bucket=s3_head_object_request["Bucket"],
                 Key=s3_head_object_request["Key"],
                 **s3_head_object_response
             )
-        )
 
-        # TODO: Serialized response error with datetime.
-        lambda_response_body_s3_object["LastModified"] = str(
-            lambda_response_body_s3_object["LastModified"]
-        )
+            s3_objects.append(s3_object)
 
-        print(lambda_response_body_s3_object)
+        except BinAsciiError as e:
+            # TODO: Add an error
+            print(e)
+            continue
 
-        lambda_response_body_s3_objects.append(lambda_response_body_s3_object)
+    lambda_response_body = LambdaResponseBody(Objects=s3_objects)
 
-    return LambdaResponse(
-        Body=LambdaResponseBody(S3Objects=lambda_response_body_s3_objects),
+    lambda_response = LambdaResponse(
+        Body=lambda_response_body,
         ContentType="application/json",
         StatusCode=HTTPStatus.OK,
     )
+
+    return lambda_response
