@@ -2,25 +2,22 @@
 #set($output = $util.parseJson($inputBody.get("output")))
 {
     "images": [
-#if($output.get("body"))
-    #set($outputBody = $output.body)
-    #if($outputBody.get("objects"))
-        #set($s3Objects = $outputBody.objects)
-        #foreach($s3Object in $s3Objects)
-        {
-            #set($s3ObjectBucket = $s3Object.get("Bucket"))
-            #set($s3ObjectContentLanguage = $s3Object.get("ContentLanguage"))
-            #set($s3ObjectContentLength = $s3Object.get("ContentLength"))
-            #set($s3ObjectContentType = $s3Object.get("ContentType"))
-            #set($s3ObjectKey = $s3Object.get("Key"))
-            #set($s3ObjectURL = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
+#if($output.get("Objects"))
+    #set($s3Objects = $output.Objects)
+    #foreach($s3Object in $s3Objects)
+    {
+        #set($s3ObjectBucket = $s3Object.get("Bucket"))
+        #set($s3ObjectContentLanguage = $s3Object.get("ContentLanguage"))
+        #set($s3ObjectContentLength = $s3Object.get("ContentLength"))
+        #set($s3ObjectContentType = $s3Object.get("ContentType"))
+        #set($s3ObjectKey = $s3Object.get("Key"))
+        #set($s3ObjectURL = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
 
-            "contentLanguage": "$s3ObjectContentLanguage",
-            "contentLength": "$s3ObjectContentLength",
-            "contentType": "$s3ObjectContentType",
-            "url": "$s3ObjectURL"
-        }#if($foreach.hasNext),#end
-        #end
+        "contentLanguage": "$s3ObjectContentLanguage",
+        "contentLength": "$s3ObjectContentLength",
+        "contentType": "$s3ObjectContentType",
+        "url": "$s3ObjectURL"
+    }#if($foreach.hasNext),#end
     #end
 #end
     ]

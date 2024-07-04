@@ -315,18 +315,8 @@ class S3Client:
 class FunctionInput(TypedDict):
     body: TextImageInput
 
-
-class FunctionOutputBody(TypedDict):
-    objects: List[S3Object]
-
-
-FunctionOutputContentType = Literal["application/json"]
-
-
 class FunctionOutput(TypedDict):
-    body: FunctionOutputBody
-    headers: Optional[Dict[str, str]]
-    statusCode: int
+    Objects: List[S3Object]
 
 
 if not "S3_BUCKET_ACL" in environ:
@@ -439,13 +429,8 @@ def main(function_input: FunctionInput, _=None) -> FunctionOutput:
 
         s3_objects.append(s3_object)
 
-    function_output_body = FunctionOutputBody(objects=s3_objects)
     function_output = FunctionOutput(
-        body=function_output_body,
-        headers={
-            "content-type": "application/json",
-        },
-        statusCode=HTTPStatus.OK,
+        Objects=s3_objects
     )
 
     return function_output

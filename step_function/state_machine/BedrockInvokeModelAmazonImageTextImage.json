@@ -1185,7 +1185,7 @@
                     }
                 }
             ],
-            "Next": "LambdaInvokeBedrockAmazonImageTextImage",
+            "Next": "LambdaInvoke",
             "ResultSelector": {
                 "accountId.$": "$[0]",
                 "apiId.$": "$[1]",
@@ -1212,10 +1212,9 @@
                 "webaclArn.$": "$[22]"
             }
         },
-        "LambdaInvokeBedrockAmazonImageTextImage": {
+        "LambdaInvoke": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
-            "OutputPath": "$.Payload",
             "Parameters": {
                 "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}",
                 "Payload.$": "$"
@@ -1241,7 +1240,42 @@
                     "MaxAttempts": 3
                 }
             ],
+            "Next": "CheckLambdaInvoke"
+        },
+        "CheckLambdaInvoke": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "And": [
+                        {
+                            "Variable": "$.StatusCode",
+                            "IsPresent": true
+                        },
+                        {
+                            "And": [
+                                {
+                                    "Variable": "$.StatusCode",
+                                    "IsNumeric": true
+                                },
+                                {
+                                    "Variable": "$.StatusCode",
+                                    "NumericEquals": 200
+                                }
+                            ]
+                        }
+                    ],
+                    "Next": "PassLambdaInvokePayload"
+                }
+            ],
+            "Default": "Fail"
+        },
+        "PassLambdaInvokePayload": {
+            "Type": "Pass",
+            "InputPath": "$.Payload",
             "Next": "Success"
+        },
+        "Fail": {
+            "Type": "Fail"
         },
         "Success": {
             "Type": "Succeed"
