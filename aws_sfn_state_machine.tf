@@ -1,19 +1,12 @@
-resource "aws_sfn_state_machine" "bedrock_amazon_image_text_image" {
-  definition = templatefile("./step_function/state_machine/BedrockInvokeModelAmazonImageTextImage.json", {
-    aws_lambda_function_arn           = aws_lambda_function.bedrock_amazon_image_text_image.arn
-    aws_lambda_alias_function_version = aws_lambda_alias.bedrock_amazon_image_text_image.function_version
+resource "aws_sfn_state_machine" "bedrock_invoke_model_amazon_titan_image_generator_text_image" {
+  definition = templatefile("./step_function/state_machine/bedrock/runtime/invoke_model/amazon/titan/ImageGeneratorTextImage.json", {
+    aws_lambda_function_arn           = aws_lambda_function.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.arn
+    aws_lambda_alias_function_version = aws_lambda_alias.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.function_version
     aws_region                        = data.aws_region.main.name
   })
-  /*
-  logging_configuration {
-    include_execution_data = true
-    level                  = "ALL"
-    log_destination        = "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_amazon_text.arn}:*"
-  }
-  */
-  name     = "${local.organization}-bedrock-amazon-image-text-image"
+  name     = "bedrock-invoke-model-amazon-titan-image-generator-text-image"
   publish  = false
-  role_arn = aws_iam_role.sfn_state_machine_bedrock_amazon_image_text_image.arn
+  role_arn = aws_iam_role.sfn_state_machine_bedrock_invoke_model_amazon_titan_image_generator.arn
   tags     = local.tags
   tracing_configuration {
     enabled = true
@@ -21,20 +14,13 @@ resource "aws_sfn_state_machine" "bedrock_amazon_image_text_image" {
   type = "EXPRESS"
 }
 
-resource "aws_sfn_state_machine" "bedrock_amazon_text" {
-  definition = templatefile("./step_function/state_machine/BedrockInvokeModelAmazonText.json", {
+resource "aws_sfn_state_machine" "bedrock_invoke_model_amazon_titan_text" {
+  definition = templatefile("./step_function/state_machine/bedrock/runtime/invoke_model/amazon/titan/Text.json", {
     aws_region = data.aws_region.main.name
   })
-  /*
-  logging_configuration {
-    include_execution_data = true
-    level                  = "ALL"
-    log_destination        = "${aws_cloudwatch_log_group.sfn_state_machine_bedrock_amazon_text.arn}:*"
-  }
-  */
-  name     = "${local.organization}-bedrock-amazon-text"
+  name     = "bedrock-invoke-model-amazon-titan-text"
   publish  = false
-  role_arn = aws_iam_role.sfn_state_machine_bedrock_amazon_text.arn
+  role_arn = aws_iam_role.sfn_state_machine_bedrock_invoke_model_amazon_titan_text.arn
   tags     = local.tags
   tracing_configuration {
     enabled = true

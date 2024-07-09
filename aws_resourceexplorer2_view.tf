@@ -6,7 +6,7 @@ resource "aws_resourceexplorer2_view" "api_gateway_rest_api" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-api-gateway-rest-api"
+  name = "api-gateway-rest-api"
 }
 
 resource "aws_resourceexplorer2_view" "cloudtrail_trail" {
@@ -17,7 +17,7 @@ resource "aws_resourceexplorer2_view" "cloudtrail_trail" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-cloudtrail-trail"
+  name = "cloudtrail-trail"
 }
 
 resource "aws_resourceexplorer2_view" "cloudwatch_log_group" {
@@ -28,7 +28,7 @@ resource "aws_resourceexplorer2_view" "cloudwatch_log_group" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-cloudwatch-log-group"
+  name = "cloudwatch-log-group"
 }
 
 resource "aws_resourceexplorer2_view" "iam" {
@@ -39,7 +39,7 @@ resource "aws_resourceexplorer2_view" "iam" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-iam"
+  name = "iam"
 }
 
 resource "aws_resourceexplorer2_view" "lambda_function" {
@@ -50,7 +50,7 @@ resource "aws_resourceexplorer2_view" "lambda_function" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-lambda-function"
+  name = "lambda-function"
 }
 
 resource "aws_resourceexplorer2_view" "s3_bucket" {
@@ -61,7 +61,7 @@ resource "aws_resourceexplorer2_view" "s3_bucket" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-s3-bucket"
+  name = "s3-bucket"
 }
 
 resource "aws_resourceexplorer2_view" "sfn_step_function" {
@@ -72,5 +72,5 @@ resource "aws_resourceexplorer2_view" "sfn_step_function" {
   included_property {
     name = "tags"
   }
-  name = "${local.organization}-sfn-step-function"
+  name = "sfn-step-function"
 }

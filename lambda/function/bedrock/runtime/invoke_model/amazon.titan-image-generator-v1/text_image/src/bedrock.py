@@ -1,16 +1,21 @@
 from abc import ABC, abstractmethod
-from base64 import b64decode
+from base64 import b64decode, b64encode
 from hashlib import md5
 from botocore.response import StreamingBody
 from typing import ByteString, List, Literal, Optional, TypedDict
-import boto3
 
 
 class Base64Image:
     def __init__(self, s: str):
-        self.bytes = b64decode(s.encode("ascii"))
-        self.md5_hexdigest = md5(self.bytes).hexdigest()
+        s = s.encode("ascii")
+        self.bytes = b64decode(s)
+        self.md5 = md5(self.bytes)
+        self.md5_hexdigest = self.md5.hexdigest()
         self.size = len(self.bytes)
+
+
+class InputInvokeModel(TypedDict):
+    body: ByteString
 
 
 class OutputInvokeModelBody(TypedDict):
@@ -21,6 +26,11 @@ class OutputInvokeModelBody(TypedDict):
 class OutputInvokeModel(TypedDict):
     body: StreamingBody
     contentType: Literal["application/json"]
+
+
+class ExceptionInvokeModel(Exception):
+    def __init__(self, body: OutputInvokeModelBody) -> None:
+        super().__init__(body["error"])
 
 
 class AbstractRuntime(ABC):
@@ -38,5 +48,19 @@ class AbstractRuntime(ABC):
         raise NotImplementedError
 
 
-def runtime() -> AbstractRuntime:
-    return boto3.client("bedrock-runtime")
+class Runtime:
+    __client: AbstractRuntime
+
+    def invoke_model(
+        self,
+        input: InputInvokeModel,
+    ) -> OutputInvokeModel:
+        return self.__client.invoke_model(
+            accept="application/json",
+            body=input["body"],
+            contentType="application/json",
+            modelId="amazon.titan-image-generator-v1",
+        )
+
+    def __init__(self, client: AbstractRuntime):
+        self.__client = client

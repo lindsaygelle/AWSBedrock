@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import ByteString, Dict, Literal, Optional, TypedDict
-import boto3
 
 ObjectACL = Literal[
     "authenticated-read",
@@ -34,6 +33,30 @@ ObjectStorageClass = Literal[
     "STANDARD_IA",
 ]
 ObjectServerSideEncryption = Literal["AES256", "aws:kms", "aws:kms:dsse"]
+
+
+class InputHeadObject(TypedDict):
+    Bucket: str
+    ExpectedBucketOwner: str
+    Key: str
+
+
+class InputGetObjectInformation(InputHeadObject):
+    pass
+
+
+class InputPutObject(TypedDict):
+    ACL: ObjectACL
+    Body: ByteString
+    Bucket: str
+    ContentDisposition: str
+    ContentLanguage: str
+    ContentLength: str
+    ContentMD5: str
+    ContentType: str
+    ExpectedBucketOwner: str
+    Key: str
+    StorageClass: ObjectStorageClass
 
 
 class OutputHeadObject(TypedDict):
@@ -71,6 +94,14 @@ class OutputHeadObject(TypedDict):
     StorageClass: Optional[ObjectStorageClass]
     VersionId: Optional[str]
     WebsiteRedirectLocation: Optional[str]
+
+
+class OutputObjectInformation(OutputHeadObject):
+    Bucket: str
+    Expires: Optional[str]
+    Key: str
+    LastModified: Optional[str]
+    ObjectLockRetainUntilDate: Optional[str]
 
 
 class OutputPutObject(TypedDict):
@@ -134,7 +165,7 @@ class AbstractClient(ABC):
         GrantRead: Optional[str],
         GrantReadACP: Optional[str],
         GrantWriteACP: Optional[str],
-        Key: Optional[str],
+        Key: str,
         ServerSideEncryption: Optional[ObjectServerSideEncryption],
         StorageClass: Optional[ObjectStorageClass],
         WebsiteRedirectLocation: Optional[str],
@@ -153,5 +184,55 @@ class AbstractClient(ABC):
         raise NotImplementedError
 
 
-def client() -> AbstractClient:
-    return boto3.client("s3")
+class Client:
+    __client: AbstractClient
+
+    def head_object(self, input: InputHeadObject) -> OutputHeadObject:
+        return self.__client.head_object(
+            Bucket=input["Bucket"],
+            ExpectedBucketOwner=input["ExpectedBucketOwner"],
+            Key=input["Key"],
+        )
+
+    def get_object_information(
+        self, input: InputGetObjectInformation
+    ) -> OutputPutObject:
+        output_object_information = OutputObjectInformation(
+            Bucket=input["Bucket"],
+            ExpectedBucketOwner=input["ExpectedBucketOwner"],
+            Key=input["Key"],
+            **self.head_object(input)
+        )
+        if "Expires" in output_object_information:
+            output_object_information["Expires"] = str(
+                output_object_information["Expires"]
+            )
+        if "LastModified" in output_object_information:
+            output_object_information["LastModified"] = str(
+                output_object_information["LastModified"]
+            )
+        if "ObjectLockRetainUntilDate" in output_object_information:
+            output_object_information["ObjectLockRetainUntilDate"] = str(
+                output_object_information["ObjectLockRetainUntilDate"]
+            )
+        return output_object_information
+
+    def put_object(
+        self,
+        input: InputPutObject,
+    ) -> OutputPutObject:
+        return self.__client.put_object(
+            ACL=input["ACL"],
+            Body=input["Body"],
+            Bucket=input["Bucket"],
+            ContentDisposition=input["ContentDisposition"],
+            ContentLanguage=input["ContentLanguage"],
+            ContentLength=input["ContentLength"],
+            ContentType=input["ContentType"],
+            ExpectedBucketOwner=input["ExpectedBucketOwner"],
+            Key=input["Key"],
+            StorageClass=input["StorageClass"],
+        )
+
+    def __init__(self, client: AbstractClient) -> None:
+        self.__client = client
