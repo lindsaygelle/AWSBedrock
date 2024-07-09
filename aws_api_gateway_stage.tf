@@ -1,5 +1,5 @@
+/*
 resource "aws_api_gateway_stage" "bedrock" {
-  /*
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_rest_api_bedrock.arn
     format = jsonencode({
@@ -29,7 +29,6 @@ resource "aws_api_gateway_stage" "bedrock" {
       "webaclArn" : "$context.webaclArn",
     })
   }
-  */
   deployment_id        = aws_api_gateway_deployment.bedrock.id
   description          = null
   rest_api_id          = aws_api_gateway_deployment.bedrock.rest_api_id
@@ -37,3 +36,4 @@ resource "aws_api_gateway_stage" "bedrock" {
   variables            = {}
   xray_tracing_enabled = true
 }
+*/

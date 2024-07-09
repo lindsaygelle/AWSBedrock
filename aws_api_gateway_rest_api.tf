@@ -7,6 +7,6 @@ resource "aws_api_gateway_rest_api" "bedrock" {
   }
   fail_on_warnings         = false
   minimum_compression_size = null
-  name                     = "${local.organization}-bedrock"
+  name                     = "bedrock"
   tags                     = local.tags
 }

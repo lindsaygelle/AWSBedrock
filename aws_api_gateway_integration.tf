@@ -41,7 +41,7 @@ resource "aws_api_gateway_integration" "bedrock_amazon_image_text_image_post" {
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
   request_templates = {
     "application/json" = templatefile("./api_gateway/rest_api/bedrock/request_template/AmazonImageTextImageWriteRequest.vtl", {
-      aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_amazon_image_text_image.arn
+      aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_invoke_model_amazon_titan_image_generator_text_image.arn
     })
   }
   resource_id = aws_api_gateway_method.bedrock_amazon_image_text_image_post.resource_id
@@ -57,7 +57,7 @@ resource "aws_api_gateway_integration" "bedrock_amazon_text_post" {
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
   request_templates = {
     "application/json" = templatefile("./api_gateway/rest_api/bedrock/request_template/AmazonTextWriteRequest.vtl", {
-      aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_amazon_text.arn
+      aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_invoke_model_amazon_titan_text.arn
     })
   }
   resource_id = aws_api_gateway_method.bedrock_amazon_text_post.resource_id
