@@ -48,8 +48,8 @@ s3_client = S3Client(client("s3"))
 
 def main(event: InputEvent, _=None) -> OutputEvent:
 
-    if event["textToImageParams"] is None:
-        del event["textToImageParams"]
+    if event["textToImageParams"]["negativeText"] is None:
+        del event["textToImageParams"]["negativeText"]
 
     titan_text_image = TextImage(
         imageGenerationConfig=ImageGenerationConfig(**event["imageGenerationConfig"]),

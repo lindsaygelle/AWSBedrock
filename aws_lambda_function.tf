@@ -20,6 +20,7 @@ resource "aws_lambda_function" "write_amazon_titan_image_generator_v1_text_image
   layers        = []
   logging_config {
     log_format = "JSON"
+    log_group  = aws_cloudwatch_log_group.lambda_function_write_amazon_titan_image_generator_v1_text_image.name
   }
   memory_size                        = 128
   package_type                       = "Zip"

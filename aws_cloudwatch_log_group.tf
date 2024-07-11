@@ -6,15 +6,17 @@ resource "aws_cloudwatch_log_group" "api_gateway_rest_api_bedrock_latest" {
   skip_destroy      = false
   tags              = local.tags
 }
+*/
 
-resource "aws_cloudwatch_log_group" "lambda_function_bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image" {
+resource "aws_cloudwatch_log_group" "lambda_function_write_amazon_titan_image_generator_v1_text_image" {
   log_group_class   = "STANDARD"
-  name              = "/aws/lambda/bedrock-runtime-invoke-model-amazon-titan-image-generator-v1-text-image"
+  name              = "/aws/lambda/WriteAmazonTitanImageGeneratorV1TextImage"
   retention_in_days = 7
   skip_destroy      = false
   tags              = local.tags
 }
 
+/*
 resource "aws_cloudwatch_log_group" "sfn_state_machine_bedrock_amazon_text" {
   log_group_class   = "STANDARD"
   name              = "/aws/vendedlogs/states/bedrock-amazon-text"
