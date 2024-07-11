@@ -77,7 +77,7 @@
             ]
         }
     },
-    "title": "AmazonTitanImageGeneratorV1TextImageImageGenerationConfig",
+    "title": "WriteAmazonTitanImageGeneratorV1ImageGenerationConfig",
     "type": [
         "object"
     ]

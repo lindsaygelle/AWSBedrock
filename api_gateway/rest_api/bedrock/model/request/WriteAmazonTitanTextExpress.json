@@ -14,7 +14,7 @@
             "properties": {
                 "maxTokenCount": {
                     "default": 512,
-                    "maximum": 4096,
+                    "maximum": 8192,
                     "minimum": 0,
                     "type": [
                         "integer",
@@ -62,7 +62,7 @@
     "required": [
         "inputText"
     ],
-    "title": "AmazonTitanTextLite",
+    "title": "WriteAmazonTitanTextExpress",
     "type": [
         "object"
     ]

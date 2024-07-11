@@ -62,7 +62,7 @@
     "required": [
         "inputText"
     ],
-    "title": "AmazonTitanTextPremier",
+    "title": "WriteAmazonTitanTextPremier",
     "type": [
         "object"
     ]

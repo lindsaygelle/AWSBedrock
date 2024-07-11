@@ -1,3 +1,4 @@
+/*
 resource "aws_api_gateway_deployment" "bedrock" {
   description = null
   lifecycle {
@@ -25,3 +26,4 @@ resource "aws_api_gateway_deployment" "bedrock" {
     ]))
   }
 }
+*/

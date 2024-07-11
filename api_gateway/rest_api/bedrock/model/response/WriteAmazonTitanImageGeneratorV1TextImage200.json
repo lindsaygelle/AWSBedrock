@@ -6,5 +6,9 @@
                 "array"
             ]
         }
-    }
+    },
+    "title": "WriteAmazonTitanImageGeneratorV1TextImage200",
+    "type": [
+        "object"
+    ]
 }

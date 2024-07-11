@@ -22,7 +22,7 @@
     "required": [
         "text"
     ],
-    "title": "AmazonTitanImageGeneratorV1TextImageTextToImageParams",
+    "title": "WriteAmazonTitanImageGeneratorV1TextToImageParams",
     "type": [
         "object"
     ]
