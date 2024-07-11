@@ -2,22 +2,37 @@
 #set($output = $util.parseJson($inputBody.get("output")))
 {
     "images": [
-#if($output.get("Objects"))
-    #set($s3Objects = $output.Objects)
+#if($output.get("objects"))
+    #set($s3Objects = $output.objects)
     #foreach($s3Object in $s3Objects)
     {
 
+        #set($s3ObjectAcceptRanges = $s3Object.get("AcceptRanges"))
         #set($s3ObjectBucket = $s3Object.get("Bucket"))
+        #set($s3ObjectContentDisposition = $s3Object.get("ContentDisposition"))
         #set($s3ObjectContentLanguage = $s3Object.get("ContentLanguage"))
         #set($s3ObjectContentLength = $s3Object.get("ContentLength"))
         #set($s3ObjectContentType = $s3Object.get("ContentType"))
+        #set($s3ObjectETag = $s3Object.get("ETag"))
+        #set($s3ObjectExpectedBucketOwner = $s3Object.get("ExpectedBucketOwner"))
         #set($s3ObjectKey = $s3Object.get("Key"))
-        #set($s3ObjectURL = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
+        #set($s3ObjectLastModified = $s3Object.get("LastModified"))
+        #set($s3ObjectServerSideEncryption = $s3Object.get("ServerSideEncryption"))
+        #set($s3ObjectUrl = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
 
+        "acceptRanges": "$s3ObjectAcceptRanges",
+        "bucket": "$s3ObjectBucket",
+        "contentDisposition": "$s3ObjectContentDisposition",
         "contentLanguage": "$s3ObjectContentLanguage",
         "contentLength": "$s3ObjectContentLength",
         "contentType": "$s3ObjectContentType",
-        "url": "$s3ObjectURL"
+        "eTag": "$s3ObjectETag",
+        "expectedBucketOwner": "$s3ObjectExpectedBucketOwner",
+        "key": "$s3ObjectKey",
+        "lastModified": "$s3ObjectLastModified",
+        "serverSideEncryption": "$s3ObjectServerSideEncryption",
+        "url": "$s3ObjectUrl"
+
     }#if($foreach.hasNext),#end
     #end
 #end
