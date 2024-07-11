@@ -22,7 +22,6 @@
         },
         "ParallelCheckInputBody": {
             "Type": "Parallel",
-            "End": true,
             "Branches": [
                 {
                     "StartAt": "CheckInputBodyImageGenerationConfig",
@@ -308,10 +307,7 @@
                                 "seed.$": "$[3]",
                                 "width.$": "$[4]"
                             },
-                            "Next": "Success"
-                        },
-                        "Success": {
-                            "Type": "Succeed"
+                            "End": true
                         },
                         "PassInputBodyImageGenerationConfig": {
                             "Type": "Pass",
@@ -469,7 +465,52 @@
             "ResultSelector": {
                 "imageGenerationConfig.$": "$[0]",
                 "textToImageParams.$": "$[1]"
-            }
+            },
+            "Next": "LambdaInvoke"
+        },
+        "LambdaInvoke": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+                "Payload.$": "$",
+                "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2
+                }
+            ],
+            "Next": "CheckLambdaInvoke"
+        },
+        "CheckLambdaInvoke": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.StatusCode",
+                    "NumericEquals": 200,
+                    "Next": "PassLambdaInvokePayload"
+                }
+            ],
+            "Default": "FailCheckLambdaInvoke"
+        },
+        "PassLambdaInvokePayload": {
+            "Type": "Pass",
+            "InputPath": "$.Payload",
+            "Next": "Success"
+        },
+        "Success": {
+            "Type": "Succeed"
+        },
+        "FailCheckLambdaInvoke": {
+            "Type": "Fail"
         },
         "FailCheckInputBody": {
             "Type": "Fail"

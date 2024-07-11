@@ -1,4 +1,3 @@
-from api_gateway import HttpRequest
 from bedrock import (
     Base64Image,
     ExceptionInvokeModel,
@@ -14,19 +13,13 @@ from s3 import (
     InputPutObject,
     OutputObjectInformation,
 )
-from titan import ImageGenerationConfig, TaskType, TextToImageParams
+from titan import ImageGenerationConfig, TextImage, TextToImageParams
 from typing import List, TypedDict
 import json
 
 
-class InputInvokeModelBody(TypedDict):
-    imageGenerationConfig: ImageGenerationConfig
-    taskType: TaskType
-    textToImageParams: TextToImageParams
-
-
-class InputEvent(HttpRequest):
-    body: InputInvokeModelBody
+class InputEvent(TextImage):
+    pass
 
 
 class OutputEvent(TypedDict):
@@ -54,19 +47,19 @@ s3_client = S3Client(client("s3"))
 
 def main(event: InputEvent, _=None) -> OutputEvent:
 
-    if event["body"]["textToImageParams"] is None:
-        del event["body"]["textToImageParams"]
+    if event["textToImageParams"] is None:
+        del event["textToImageParams"]
 
-    bedrock_input_invoke_model_body = InputInvokeModelBody(
+    titan_text_image = TextImage(
         imageGenerationConfig=ImageGenerationConfig(
-            **event["body"]["imageGenerationConfig"]
+            **event["imageGenerationConfig"]
         ),
         taskType="TEXT_IMAGE",
-        textToImageParams=TextToImageParams(**event["body"]["textToImageParams"]),
+        textToImageParams=TextToImageParams(**event["textToImageParams"]),
     )
 
     bedrock_input_invoke_model = InputInvokeModel(
-        body=json.dumps(bedrock_input_invoke_model_body)
+        body=json.dumps(titan_text_image)
     )
 
     bedrock_output_invoke_model = bedrock_runtime.invoke_model(
@@ -88,6 +81,9 @@ def main(event: InputEvent, _=None) -> OutputEvent:
 
         bedrock_base64_image = Base64Image(encoded_base64_str)
 
+        bedrock_image_height = titan_text_image["imageGenerationConfig"]["height"]
+        bedrock_image_width = titan_text_image["imageGenerationConfig"]["width"]
+
         s3_input_put_object = InputPutObject(
             ACL=ENV_S3_BUCKET_ACL,
             Body=bedrock_base64_image.bytes,
@@ -97,7 +93,7 @@ def main(event: InputEvent, _=None) -> OutputEvent:
             ContentLength=bedrock_base64_image.size,
             ContentType="image/png",
             ExpectedBucketOwner=ENV_S3_BUCKET_OWNER,
-            Key=f"amazon.titan-image-generator-v1/text_image/{bedrock_base64_image.md5_hexdigest}.png",
+            Key=f"amazon.titan-image-generator-v1/text_image/{bedrock_image_height}x{bedrock_image_width}/{bedrock_base64_image.md5_hexdigest}.png",
             StorageClass="STANDARD",
         )
 

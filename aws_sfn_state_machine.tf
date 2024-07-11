@@ -1,7 +1,7 @@
 resource "aws_sfn_state_machine" "write_amazon_titan_image_generator_v1_text_image" {
   definition = templatefile("./step_function/state_machine/WriteAmazonTitanImageGeneratorV1TextImage.json", {
-    aws_lambda_function_arn           = aws_lambda_function.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.arn
-    aws_lambda_alias_function_version = aws_lambda_alias.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.function_version
+    aws_lambda_function_arn           = aws_lambda_function.write_amazon_titan_image_generator_v1_text_image.arn
+    aws_lambda_alias_function_version = aws_lambda_alias.write_amazon_titan_image_generator_v1_text_image.function_version
     aws_region                        = data.aws_region.main.name
   })
   name     = "WriteAmazonTitanImageGeneratorV1TextImage"

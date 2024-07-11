@@ -5,9 +5,9 @@ resource "aws_iam_role" "api_gateway_rest_api_bedrock" {
   tags               = local.tags
 }
 
-resource "aws_iam_role" "lambda_function_bedrock_invoke_model_amazon_titan_image_generator" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_function_bedrock_invoke_model_amazon_titan_image_generator.json
-  name               = "LambdaFunctionBedrockInvokeModelAmazonTitanImageGenerator"
+resource "aws_iam_role" "lambda_function_write_amazon_titan_image_generator_v1_text_image" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_lambda_function_write_amazon_titan_image_generator_v1_text_image.json
+  name               = "LambdaFunctionWriteAmazonTitanImageGeneratorV1TextImage"
   path               = "/${local.organization}/lambda/function/"
   tags               = local.tags
 }
