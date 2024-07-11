@@ -1,4 +1,4 @@
-from apigateway import HttpRequest
+from api_gateway import HttpRequest
 from bedrock import (
     Base64Image,
     ExceptionInvokeModel,
@@ -7,7 +7,6 @@ from bedrock import (
     Runtime as BedrockRuntime,
 )
 from boto3 import client
-from botocore.exceptions import ClientError
 from os import environ
 from s3 import (
     Client as S3Client,

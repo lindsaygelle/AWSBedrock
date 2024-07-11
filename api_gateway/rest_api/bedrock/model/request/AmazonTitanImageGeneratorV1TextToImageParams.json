@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "maxProperties": 2,
+    "minProperties": 1,
+    "properties": {
+        "negativeText": {
+            "maxLength": 512,
+            "minLength": 3,
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "text": {
+            "maxLength": 512,
+            "minLength": 3,
+            "type": [
+                "string"
+            ]
+        }
+    },
+    "required": [
+        "text"
+    ],
+    "title": "AmazonTitanImageGeneratorV1TextImageTextToImageParams",
+    "type": [
+        "object"
+    ]
+}

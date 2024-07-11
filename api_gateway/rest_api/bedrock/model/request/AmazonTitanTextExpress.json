@@ -1,0 +1,69 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "minProperties": 1,
+    "properties": {
+        "inputText": {
+            "minLength": 0,
+            "type": [
+                "string"
+            ]
+        },
+        "textGenerationConfig": {
+            "maxProperties": 4,
+            "minProperties": 0,
+            "properties": {
+                "maxTokenCount": {
+                    "default": 512,
+                    "maximum": 8192,
+                    "minimum": 0,
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "stopSequences": {
+                    "items": {
+                        "minLength": 1,
+                        "type": [
+                            "string"
+                        ]
+                    },
+                    "minItems": 0,
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "temperature": {
+                    "default": 0.7,
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                },
+                "topP": {
+                    "default": 0.9,
+                    "maximum": 1.0,
+                    "minimum": 0,
+                    "type": [
+                        "null",
+                        "number"
+                    ]
+                }
+            },
+            "type": [
+                "null",
+                "object"
+            ]
+        }
+    },
+    "required": [
+        "inputText"
+    ],
+    "title": "AmazonTitanTextExpress",
+    "type": [
+        "object"
+    ]
+}

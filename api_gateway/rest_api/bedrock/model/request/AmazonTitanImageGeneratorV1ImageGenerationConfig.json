@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "maxProperties": 5,
+    "minProperties": 0,
+    "properties": {
+        "cfgScale": {
+            "default": 8.0,
+            "maximum": 10.0,
+            "minimum": 1.1,
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "height": {
+            "enum": [
+                320,
+                384,
+                448,
+                512,
+                576,
+                640,
+                704,
+                768,
+                896,
+                1024,
+                1152,
+                1280,
+                1408
+            ],
+            "maximum": 1408,
+            "minimum": 320,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "numberOfImages": {
+            "default": 1,
+            "maximum": 5,
+            "minimum": 1,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "seed": {
+            "default": 0,
+            "maximum": 2147483646,
+            "minimum": 0,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "width": {
+            "enum": [
+                320,
+                384,
+                448,
+                512,
+                576,
+                640,
+                704,
+                768,
+                896,
+                1024,
+                1152,
+                1280,
+                1408
+            ],
+            "maximum": 1408,
+            "minimum": 320,
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    },
+    "title": "AmazonTitanImageGeneratorV1TextImageImageGenerationConfig",
+    "type": [
+        "object"
+    ]
+}
