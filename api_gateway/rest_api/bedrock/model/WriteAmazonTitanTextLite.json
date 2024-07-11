@@ -1,20 +1,10 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "minProperties": 1,
     "properties": {
         "inputText": {
             "minLength": 0,
             "type": [
-                "string"
-            ]
-        },
-        "modelId": {
-            "enum": [
-                "amazon.titan-text-express-v1",
-                "amazon.titan-text-lite-v1",
-                "amazon.titan-text-premier-v1:0"
-            ],
-            "type": [
-                "null",
                 "string"
             ]
         },
@@ -23,8 +13,9 @@
             "minProperties": 0,
             "properties": {
                 "maxTokenCount": {
-                    "maximum": 3072,
-                    "minimum": 512,
+                    "default": 512,
+                    "maximum": 4096,
+                    "minimum": 0,
                     "type": [
                         "integer",
                         "null"
@@ -32,7 +23,7 @@
                 },
                 "stopSequences": {
                     "items": {
-                        "minLength":  1,
+                        "minLength": 1,
                         "type": [
                             "string"
                         ]
@@ -44,6 +35,7 @@
                     ]
                 },
                 "temperature": {
+                    "default": 0.7,
                     "maximum": 1.0,
                     "minimum": 0.0,
                     "type": [
@@ -52,6 +44,7 @@
                     ]
                 },
                 "topP": {
+                    "default": 0.9,
                     "maximum": 1.0,
                     "minimum": 0,
                     "type": [
@@ -69,7 +62,7 @@
     "required": [
         "inputText"
     ],
-    "title": "AmazonTextWriteRequest",
+    "title": "WriteAmazonTitanTextLite",
     "type": [
         "object"
     ]

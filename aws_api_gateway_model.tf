@@ -1,42 +1,52 @@
-resource "aws_api_gateway_model" "bedrock_amazon_image_image_variation_write_request" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_image_generator_v1_image_generation_config" {
   content_type = "application/json"
-  name         = "AmazonImageImageVariationWriteRequest"
+  name         = "WriteAmazonTitanImageGeneratorV1ImageGenerationConfig"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonImageImageVariationWriteRequest.json", {})
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanImageGeneratorV1ImageGenerationConfig.json", {})
 }
 
-resource "aws_api_gateway_model" "bedrock_amazon_image_inpainting_write_request" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_image_generator_v1_text_to_image_params" {
   content_type = "application/json"
-  name         = "AmazonImageInpaintingWriteRequest"
+  name         = "WriteAmazonTitanImageGeneratorV1TextToImageParams"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonImageInpaintingWriteRequest.json", {})
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanImageGeneratorV1TextToImageParams.json", {})
 }
 
-resource "aws_api_gateway_model" "bedrock_amazon_image_outpainting_write_request" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_image_generator_v1_text_image" {
   content_type = "application/json"
-  name         = "AmazonImageOutpaintingWriteRequest"
+  name         = "WriteAmazonTitanImageGeneratorV1TextImage"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonImageOutpaintingWriteRequest.json", {})
+  schema = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanImageGeneratorV1TextImage.json", {
+    image_generation_config = aws_api_gateway_model.bedrock_write_amazon_titan_image_generator_v1_image_generation_config.name
+    rest_api_id             = aws_api_gateway_rest_api.bedrock.id
+    text_to_image_params    = aws_api_gateway_model.bedrock_write_amazon_titan_image_generator_v1_text_to_image_params.name
+  })
 }
 
-resource "aws_api_gateway_model" "bedrock_amazon_image_text_image_write_request" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_image_generator_v1_text_image_200" {
   content_type = "application/json"
-  name         = "AmazonImageTextImageWriteRequest"
+  name         = "WriteAmazonTitanImageGeneratorV1TextImage200"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonImageTextImageWriteRequest.json", {})
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanImageGeneratorV1TextImage200.json", {})
 }
 
-
-resource "aws_api_gateway_model" "bedrock_amazon_text_write_request" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_text_express" {
   content_type = "application/json"
-  name         = "AmazonTextWriteRequest"
+  name         = "WriteAmazonTitanTextExpress"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonTextWriteRequest.json", {})
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanTextExpress.json", {})
 }
 
-resource "aws_api_gateway_model" "bedrock_amazon_text_write_response" {
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_text_lite" {
   content_type = "application/json"
-  name         = "AmazonTextWriteResponse"
+  name         = "WriteAmazonTitanTextLite"
   rest_api_id  = aws_api_gateway_rest_api.bedrock.id
-  schema       = templatefile("./api_gateway/rest_api/bedrock/model/AmazonTextWriteResponse.json", {})
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanTextLite.json", {})
+}
+
+resource "aws_api_gateway_model" "bedrock_write_amazon_titan_text_premier" {
+  content_type = "application/json"
+  name         = "WriteAmazonTitanTextPremier"
+  rest_api_id  = aws_api_gateway_rest_api.bedrock.id
+  schema       = templatefile("./api_gateway/rest_api/bedrock/model/WriteAmazonTitanTextPremier.json", {})
 }

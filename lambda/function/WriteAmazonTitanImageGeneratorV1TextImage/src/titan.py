@@ -14,3 +14,9 @@ class ImageGenerationConfig(TypedDict):
 class TextToImageParams(TypedDict):
     negativeText: Optional[str]
     text: str
+
+
+class TextImage(TypedDict):
+    imageGenerationConfig: ImageGenerationConfig
+    taskType: TaskType
+    textToImageParams: TextToImageParams

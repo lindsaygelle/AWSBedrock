@@ -1,0 +1,519 @@
+{
+    "StartAt": "CheckInputBody",
+    "States": {
+        "CheckInputBody": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "And": [
+                        {
+                            "Variable": "$",
+                            "IsNull": false
+                        },
+                        {
+                            "Variable": "$.body",
+                            "IsPresent": true
+                        }
+                    ],
+                    "Next": "ParallelCheckInputBody"
+                }
+            ],
+            "Default": "FailCheckInputBody"
+        },
+        "ParallelCheckInputBody": {
+            "Type": "Parallel",
+            "Branches": [
+                {
+                    "StartAt": "CheckInputBodyImageGenerationConfig",
+                    "States": {
+                        "CheckInputBodyImageGenerationConfig": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "And": [
+                                        {
+                                            "Variable": "$",
+                                            "IsNull": false
+                                        },
+                                        {
+                                            "Variable": "$.imageGenerationConfig",
+                                            "IsPresent": true
+                                        }
+                                    ],
+                                    "Next": "ParallelCheckInputBodyImageGenerationConfig"
+                                }
+                            ],
+                            "Default": "PassInputBodyImageGenerationConfig"
+                        },
+                        "ParallelCheckInputBodyImageGenerationConfig": {
+                            "Type": "Parallel",
+                            "Branches": [
+                                {
+                                    "StartAt": "CheckInputBodyImageGenerationConfigCfgScale",
+                                    "States": {
+                                        "CheckInputBodyImageGenerationConfigCfgScale": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.cfgScale",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyImageGenerationConfigCfgScaleValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyImageGenerationConfigCfgScale"
+                                        },
+                                        "CheckInputBodyImageGenerationConfigCfgScaleValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsNumeric": true,
+                                                    "Next": "PassInputBodyImageGenerationConfigCfgScaleValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyImageGenerationConfigCfgScaleValue",
+                                            "InputPath": "$.cfgScale"
+                                        },
+                                        "PassInputBodyImageGenerationConfigCfgScaleValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyImageGenerationConfigCfgScaleValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyImageGenerationConfigCfgScale": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyImageGenerationConfigCfgScaleValue",
+                                            "Parameters": {
+                                                "cfgScale": 8
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckInputBodyImageGenerationConfigHeight",
+                                    "States": {
+                                        "CheckInputBodyImageGenerationConfigHeight": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.height",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyImageGenerationConfigHeightValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyImageGenerationConfigHeight"
+                                        },
+                                        "CheckInputBodyImageGenerationConfigHeightValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsNumeric": true,
+                                                    "Next": "PassInputBodyImageGenerationConfigHeightValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyImageGenerationConfigHeightValue",
+                                            "InputPath": "$.height"
+                                        },
+                                        "PassInputBodyImageGenerationConfigHeightValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyImageGenerationConfigHeightValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyImageGenerationConfigHeight": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyImageGenerationConfigHeightValue",
+                                            "Parameters": {
+                                                "height": 512
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckInputBodyImageGenerationConfigNumberOfImages",
+                                    "States": {
+                                        "CheckInputBodyImageGenerationConfigNumberOfImages": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.numberOfImages",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyImageGenerationConfigNumberOfImagesValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyImageGenerationConfigNumberOfImages"
+                                        },
+                                        "CheckInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsNumeric": true,
+                                                    "Next": "PassInputBodyImageGenerationConfigNumberOfImagesValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyImageGenerationConfigNumberOfImagesValue",
+                                            "InputPath": "$.numberOfImages"
+                                        },
+                                        "PassInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyImageGenerationConfigNumberOfImagesValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyImageGenerationConfigNumberOfImages": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyImageGenerationConfigNumberOfImagesValue",
+                                            "Parameters": {
+                                                "numberOfImages": 1
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckInputBodyImageGenerationConfigSeed",
+                                    "States": {
+                                        "CheckInputBodyImageGenerationConfigSeed": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.seed",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyImageGenerationConfigSeedValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyImageGenerationConfigSeed"
+                                        },
+                                        "CheckInputBodyImageGenerationConfigSeedValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsNumeric": true,
+                                                    "Next": "PassInputBodyImageGenerationConfigSeedValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyImageGenerationConfigSeedValue",
+                                            "InputPath": "$.seed"
+                                        },
+                                        "PassInputBodyImageGenerationConfigSeedValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyImageGenerationConfigSeedValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyImageGenerationConfigSeed": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyImageGenerationConfigSeedValue",
+                                            "Parameters": {
+                                                "seed": 0
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckInputBodyImageGenerationConfigWidth",
+                                    "States": {
+                                        "CheckInputBodyImageGenerationConfigWidth": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.width",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyImageGenerationConfigWidthValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyImageGenerationConfigWidth"
+                                        },
+                                        "CheckInputBodyImageGenerationConfigWidthValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsNumeric": true,
+                                                    "Next": "PassInputBodyImageGenerationConfigWidthValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyImageGenerationConfigWidthValue",
+                                            "InputPath": "$.width"
+                                        },
+                                        "PassInputBodyImageGenerationConfigWidthValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyImageGenerationConfigWidthValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyImageGenerationConfigWidth": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyImageGenerationConfigWidthValue",
+                                            "Parameters": {
+                                                "width": 512
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "InputPath": "$.imageGenerationConfig",
+                            "ResultSelector": {
+                                "cfgScale.$": "$[0]",
+                                "height.$": "$[1]",
+                                "numberOfImages.$": "$[2]",
+                                "seed.$": "$[3]",
+                                "width.$": "$[4]"
+                            },
+                            "End": true
+                        },
+                        "PassInputBodyImageGenerationConfig": {
+                            "Type": "Pass",
+                            "Next": "ParallelCheckInputBodyImageGenerationConfig",
+                            "Parameters": {
+                                "imageGenerationConfig": null
+                            }
+                        }
+                    }
+                },
+                {
+                    "StartAt": "CheckInputBodyTextToImageParams",
+                    "States": {
+                        "CheckInputBodyTextToImageParams": {
+                            "Type": "Choice",
+                            "Choices": [
+                                {
+                                    "And": [
+                                        {
+                                            "Variable": "$",
+                                            "IsNull": false
+                                        },
+                                        {
+                                            "Variable": "$.textToImageParams",
+                                            "IsPresent": true
+                                        }
+                                    ],
+                                    "Next": "ParallelCheckInputBodyTextToImageParams"
+                                }
+                            ],
+                            "Default": "FailCheckInputBodyTextToImageParams"
+                        },
+                        "ParallelCheckInputBodyTextToImageParams": {
+                            "Type": "Parallel",
+                            "End": true,
+                            "Branches": [
+                                {
+                                    "StartAt": "CheckInputBodyTextToImageParamsNegativeText",
+                                    "States": {
+                                        "CheckInputBodyTextToImageParamsNegativeText": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.negativeText",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyTextToImageParamsNegativeTextValue"
+                                                }
+                                            ],
+                                            "Default": "PassInputBodyTextToImageParamsNegativeText"
+                                        },
+                                        "CheckInputBodyTextToImageParamsNegativeTextValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Or": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": true
+                                                        },
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsString": true
+                                                        }
+                                                    ],
+                                                    "Next": "PassInputBodyTextToImageParamsNegativeTextValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyTextToImageParamsNegativeTextValue",
+                                            "InputPath": "$.negativeText"
+                                        },
+                                        "PassInputBodyTextToImageParamsNegativeTextValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyTextToImageParamsNegativeTextValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "PassInputBodyTextToImageParamsNegativeText": {
+                                            "Type": "Pass",
+                                            "Next": "CheckInputBodyTextToImageParamsNegativeTextValue",
+                                            "Parameters": {
+                                                "negativeText": null
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "StartAt": "CheckInputBodyTextToImageParamsText",
+                                    "States": {
+                                        "CheckInputBodyTextToImageParamsText": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "And": [
+                                                        {
+                                                            "Variable": "$",
+                                                            "IsNull": false
+                                                        },
+                                                        {
+                                                            "Variable": "$.text",
+                                                            "IsPresent": true
+                                                        }
+                                                    ],
+                                                    "Next": "CheckInputBodyTextToImageParamsTextValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyTextToImageParamsText"
+                                        },
+                                        "CheckInputBodyTextToImageParamsTextValue": {
+                                            "Type": "Choice",
+                                            "Choices": [
+                                                {
+                                                    "Variable": "$",
+                                                    "IsString": true,
+                                                    "Next": "PassInputBodyTextToImageParamsTextValue"
+                                                }
+                                            ],
+                                            "Default": "FailCheckInputBodyTextToImageParamsTextValue",
+                                            "InputPath": "$.text"
+                                        },
+                                        "PassInputBodyTextToImageParamsTextValue": {
+                                            "Type": "Pass",
+                                            "End": true
+                                        },
+                                        "FailCheckInputBodyTextToImageParamsTextValue": {
+                                            "Type": "Fail"
+                                        },
+                                        "FailCheckInputBodyTextToImageParamsText": {
+                                            "Type": "Fail"
+                                        }
+                                    }
+                                }
+                            ],
+                            "ResultSelector": {
+                                "negativeText.$": "$[0]",
+                                "text.$": "$[1]"
+                            },
+                            "InputPath": "$.textToImageParams"
+                        },
+                        "FailCheckInputBodyTextToImageParams": {
+                            "Type": "Fail"
+                        }
+                    }
+                }
+            ],
+            "InputPath": "$.body",
+            "ResultSelector": {
+                "imageGenerationConfig.$": "$[0]",
+                "textToImageParams.$": "$[1]"
+            },
+            "Next": "LambdaInvoke"
+        },
+        "LambdaInvoke": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+                "Payload.$": "$",
+                "FunctionName": "${aws_lambda_function_arn}:${aws_lambda_alias_function_version}"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2
+                }
+            ],
+            "Next": "CheckLambdaInvoke"
+        },
+        "CheckLambdaInvoke": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.StatusCode",
+                    "NumericEquals": 200,
+                    "Next": "PassLambdaInvokePayload"
+                }
+            ],
+            "Default": "FailCheckLambdaInvoke"
+        },
+        "PassLambdaInvokePayload": {
+            "Type": "Pass",
+            "InputPath": "$.Payload",
+            "Next": "Success"
+        },
+        "Success": {
+            "Type": "Succeed"
+        },
+        "FailCheckLambdaInvoke": {
+            "Type": "Fail"
+        },
+        "FailCheckInputBody": {
+            "Type": "Fail"
+        }
+    }
+}

@@ -1,4 +1,4 @@
-resource "aws_lambda_function" "bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image" {
+resource "aws_lambda_function" "write_amazon_titan_image_generator_v1_text_image" {
   architectures           = ["x86_64"]
   code_signing_config_arn = null
   description             = null
@@ -12,25 +12,29 @@ resource "aws_lambda_function" "bedrock_runtime_invoke_model_amazon_titan_image_
   ephemeral_storage {
     size = 512
   }
-  filename                           = data.archive_file.lambda_function_bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.output_path
-  function_name                      = "bedrock-runtime-invoke-model-amazon-titan-image-generator-v1"
-  handler                            = "main.main"
-  image_uri                          = null
-  kms_key_arn                        = null
-  layers                             = []
+  filename      = data.archive_file.lambda_function_write_amazon_titan_image_generator_v1_text_image.output_path
+  function_name = "WriteAmazonTitanImageGeneratorV1TextImage"
+  handler       = "main.main"
+  image_uri     = null
+  kms_key_arn   = null
+  layers        = []
+  logging_config {
+    log_format = "JSON"
+    log_group  = aws_cloudwatch_log_group.lambda_function_write_amazon_titan_image_generator_v1_text_image.name
+  }
   memory_size                        = 128
   package_type                       = "Zip"
   publish                            = false
   reserved_concurrent_executions     = -1
   replace_security_groups_on_destroy = null
   replacement_security_group_ids     = null
-  role                               = aws_iam_role.lambda_function_bedrock_invoke_model_amazon_titan_image_generator.arn
+  role                               = aws_iam_role.lambda_function_write_amazon_titan_image_generator_v1_text_image.arn
   runtime                            = "python3.10"
   s3_bucket                          = null
   s3_key                             = null
   s3_object_version                  = null
   skip_destroy                       = false
-  source_code_hash                   = filebase64sha256(data.archive_file.lambda_function_bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.output_path)
+  source_code_hash                   = filebase64sha256(data.archive_file.lambda_function_write_amazon_titan_image_generator_v1_text_image.output_path)
   tags                               = local.tags
   timeout                            = 60 * 5
   tracing_config {

@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "maxProperties": 2,
+    "minProperties": 1,
+    "properties": {
+        "imageGenerationConfig": {
+            "$ref": "https://apigateway.amazonaws.com/restapis/${rest_api_id}/models/${image_generation_config}"
+        },
+        "textToImageParams": {
+            "$ref": "https://apigateway.amazonaws.com/restapis/${rest_api_id}/models/${text_to_image_params}"
+        }
+    },
+    "required": [
+        "textToImageParams"
+    ],
+    "title": "WriteAmazonTitanImageGeneratorV1TextImage",
+    "type": [
+        "object"
+    ]
+}
