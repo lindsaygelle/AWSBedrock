@@ -12,16 +12,9 @@ resource "aws_iam_role" "lambda_function_bedrock_invoke_model_amazon_titan_image
   tags               = local.tags
 }
 
-resource "aws_iam_role" "sfn_state_machine_bedrock_invoke_model_amazon_titan_image_generator" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_bedrock_invoke_model_amazon_titan_image_generator.json
-  name               = "SFNStateMachineBedrockInvokeModelAmazonTitanImageGenerator"
-  path               = "/${local.organization}/sfn/state_machine/"
-  tags               = local.tags
-}
-
-resource "aws_iam_role" "sfn_state_machine_bedrock_invoke_model_amazon_titan_text" {
-  assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_bedrock_invoke_model_amazon_titan_text.json
-  name               = "SFNStateMachineBedrockInvokeModelAmazonTitanText"
+resource "aws_iam_role" "sfn_state_machine_write_amazon_titan_image_generator_v1_text_image" {
+  assume_role_policy = data.aws_iam_policy_document.assume_role_sfn_state_machine_write_amazon_titan_image_generator_v1_text_image.json
+  name               = "SFNStateMachineWriteAmazonTitanImageGeneratorV1TextImage"
   path               = "/${local.organization}/sfn/state_machine/"
   tags               = local.tags
 }

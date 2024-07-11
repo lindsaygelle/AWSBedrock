@@ -5,7 +5,7 @@ resource "aws_api_gateway_integration" "bedrock_amazon_titan_image_generator_v1_
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
   request_templates = {
     "application/json" = templatefile("./api_gateway/rest_api/bedrock/request_template/WriteAmazonTitanImageGeneratorV1TextImage.vtl", {
-      aws_sfn_state_machine_arn = aws_sfn_state_machine.bedrock_invoke_model_amazon_titan_image_generator_text_image.arn
+      aws_sfn_state_machine_arn = aws_sfn_state_machine.write_amazon_titan_image_generator_v1_text_image.arn
     })
   }
   resource_id = aws_api_gateway_method.bedrock_amazon_titan_image_generator_v1_text_image_post.resource_id

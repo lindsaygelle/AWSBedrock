@@ -22,20 +22,7 @@ data "aws_iam_policy_document" "assume_role_lambda_function_bedrock_invoke_model
   }
 }
 
-data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_invoke_model_amazon_titan_image_generator" {
-  statement {
-    actions = [
-      "sts:AssumeRole"
-    ]
-    effect = "Allow"
-    principals {
-      identifiers = ["states.amazonaws.com"]
-      type        = "Service"
-    }
-  }
-}
-
-data "aws_iam_policy_document" "assume_role_sfn_state_machine_bedrock_invoke_model_amazon_titan_text" {
+data "aws_iam_policy_document" "assume_role_sfn_state_machine_write_amazon_titan_image_generator_v1_text_image" {
   statement {
     actions = [
       "sts:AssumeRole"
@@ -71,8 +58,7 @@ data "aws_iam_policy_document" "api_gateway_rest_api_bedrock" {
     ]
     effect = "Allow"
     resources = [
-      "${aws_sfn_state_machine.bedrock_invoke_model_amazon_titan_image_generator_text_image.arn}",
-      "${aws_sfn_state_machine.bedrock_invoke_model_amazon_titan_text.arn}"
+      "${aws_sfn_state_machine.write_amazon_titan_image_generator_v1_text_image.arn}",
     ]
   }
 }
@@ -264,7 +250,7 @@ data "aws_iam_policy_document" "s3_bucket_public" {
   }
 }
 
-data "aws_iam_policy_document" "sfn_state_machine_bedrock_invoke_model_amazon_titan_image_generator" {
+data "aws_iam_policy_document" "sfn_state_machine_write_amazon_titan_image_generator_v1_text_image" {
   statement {
     actions = ["bedrock:InvokeModel"]
     effect  = "Allow"
@@ -278,6 +264,11 @@ data "aws_iam_policy_document" "sfn_state_machine_bedrock_invoke_model_amazon_ti
     resources = [
       "${aws_lambda_function.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.arn}:${aws_lambda_alias.bedrock_runtime_invoke_model_amazon_titan_image_generator_v1_text_image.function_version}"
     ]
+  }
+  statement {
+    actions   = ["logs:*"]
+    effect    = "Allow"
+    resources = ["*"]
   }
 }
 

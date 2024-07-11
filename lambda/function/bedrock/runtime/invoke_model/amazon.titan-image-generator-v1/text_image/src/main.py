@@ -54,6 +54,9 @@ s3_client = S3Client(client("s3"))
 
 def main(event: InputEvent, _=None) -> OutputEvent:
 
+    if event["body"]["textToImageParams"] is None:
+        del event["body"]["textToImageParams"]
+
     bedrock_input_invoke_model_body = InputInvokeModelBody(
         imageGenerationConfig=ImageGenerationConfig(
             **event["body"]["imageGenerationConfig"]
