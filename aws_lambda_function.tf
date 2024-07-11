@@ -12,12 +12,15 @@ resource "aws_lambda_function" "write_amazon_titan_image_generator_v1_text_image
   ephemeral_storage {
     size = 512
   }
-  filename                           = data.archive_file.lambda_function_write_amazon_titan_image_generator_v1_text_image.output_path
-  function_name                      = "WriteAmazonTitanImageGeneratorV1TextImage"
-  handler                            = "main.main"
-  image_uri                          = null
-  kms_key_arn                        = null
-  layers                             = []
+  filename      = data.archive_file.lambda_function_write_amazon_titan_image_generator_v1_text_image.output_path
+  function_name = "WriteAmazonTitanImageGeneratorV1TextImage"
+  handler       = "main.main"
+  image_uri     = null
+  kms_key_arn   = null
+  layers        = []
+  logging_config {
+    log_format = "JSON"
+  }
   memory_size                        = 128
   package_type                       = "Zip"
   publish                            = false

@@ -18,8 +18,9 @@ from typing import List, TypedDict
 import json
 
 
-class InputEvent(TextImage):
-    pass
+class InputEvent:
+    imageGenerationConfig: ImageGenerationConfig
+    textToImageParams: TextToImageParams
 
 
 class OutputEvent(TypedDict):
@@ -51,16 +52,16 @@ def main(event: InputEvent, _=None) -> OutputEvent:
         del event["textToImageParams"]
 
     titan_text_image = TextImage(
-        imageGenerationConfig=ImageGenerationConfig(
-            **event["imageGenerationConfig"]
-        ),
+        imageGenerationConfig=ImageGenerationConfig(**event["imageGenerationConfig"]),
         taskType="TEXT_IMAGE",
         textToImageParams=TextToImageParams(**event["textToImageParams"]),
     )
 
-    bedrock_input_invoke_model = InputInvokeModel(
-        body=json.dumps(titan_text_image)
-    )
+    print(titan_text_image)
+
+    bedrock_input_invoke_model = InputInvokeModel(body=json.dumps(titan_text_image))
+
+    print(bedrock_input_invoke_model)
 
     bedrock_output_invoke_model = bedrock_runtime.invoke_model(
         bedrock_input_invoke_model
@@ -97,7 +98,9 @@ def main(event: InputEvent, _=None) -> OutputEvent:
             StorageClass="STANDARD",
         )
 
-        _ = s3_client.put_object(s3_input_put_object)
+        s3_output_put_object = s3_client.put_object(s3_input_put_object)
+
+        print(s3_output_put_object)
 
         s3_input_get_object_information = InputGetObjectInformation(
             Bucket=s3_input_put_object["Bucket"],
@@ -108,6 +111,8 @@ def main(event: InputEvent, _=None) -> OutputEvent:
         s3_get_object_information = s3_client.get_object_information(
             s3_input_get_object_information
         )
+
+        print(s3_get_object_information)
 
         output_objects.append(s3_get_object_information)
 
