@@ -1,0 +1,138 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "properties": {
+        "cfg_scale": {
+            "default": 7,
+            "maximum": 35,
+            "minimum": 0,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "clip_guidance_preset": {
+            "enum": [
+                "FAST_BLUE",
+                "FAST_GREEN",
+                "NONE",
+                "SIMPLE",
+                "SLOW",
+                "SLOWER",
+                "SLOWEST"
+            ],
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "height": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "sampler": {
+            "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+            ],
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "seed": {
+            "default": 1,
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "steps": {
+            "default": 30,
+            "maximum": 50,
+            "minimum": 10,
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "style_preset": {
+            "enum": [
+                "3d-model",
+                "analog-film",
+                "anime",
+                "cinematic",
+                "comic-book",
+                "digital-art",
+                "enhance",
+                "fantasy-art",
+                "isometric",
+                "line-art",
+                "low-poly",
+                "modeling-compound",
+                "neon-punk",
+                "origami",
+                "photographic",
+                "pixel-art",
+                "tile-texture"
+            ],
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "text_prompts": {
+            "items": {
+                "properties": {
+                    "text": {
+                        "maxLength": 2000,
+                        "minLength": 0,
+                        "type": [
+                            "string"
+                        ]
+                    },
+                    "weight": {
+                        "default": 1,
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "text"
+                ],
+                "type": [
+                    "object"
+                ]
+            },
+            "type": [
+                "array"
+            ]
+        },
+        "width": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        }
+    },
+    "required": [
+        "text_prompts"
+    ],
+    "title": "WriteStabilityAIDiffusionV1TextToImage",
+    "type": [
+        "object"
+    ]
+}
