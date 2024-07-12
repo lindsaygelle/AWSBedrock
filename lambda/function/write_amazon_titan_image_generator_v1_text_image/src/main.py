@@ -13,7 +13,7 @@ from s3 import (
     InputPutObject,
     OutputObjectInformation,
 )
-from titan import ImageGenerationConfig, TextImage, TextToImageParams
+from titan.v1 import ImageGenerationConfig, TextImage, TextToImageParams
 from typing import List, TypedDict
 import json
 
