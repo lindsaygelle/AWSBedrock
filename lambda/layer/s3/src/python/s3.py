@@ -203,6 +203,8 @@ class Client:
             Key=input["Key"],
             **self.head_object(input)
         )
+        if "ETag" in output_object_information:
+            output_object_information["ETag"] = output_object_information["ETag"].replace('"', "")
         if "Expires" in output_object_information:
             output_object_information["Expires"] = str(
                 output_object_information["Expires"]

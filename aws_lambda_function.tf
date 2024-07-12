@@ -17,7 +17,11 @@ resource "aws_lambda_function" "write_amazon_titan_image_generator_v1_text_image
   handler       = "main.main"
   image_uri     = null
   kms_key_arn   = null
-  layers        = []
+  layers = [
+    aws_lambda_layer_version.bedrock.arn,
+    aws_lambda_layer_version.s3.arn,
+    aws_lambda_layer_version.titan.arn,
+  ]
   logging_config {
     log_format = "JSON"
     log_group  = aws_cloudwatch_log_group.lambda_function_write_amazon_titan_image_generator_v1_text_image.name
