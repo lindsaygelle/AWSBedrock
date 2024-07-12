@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from base64 import b64decode, b64encode
+from base64 import b64decode
 from hashlib import md5
 from botocore.response import StreamingBody
 from typing import ByteString, List, Literal, Optional, TypedDict

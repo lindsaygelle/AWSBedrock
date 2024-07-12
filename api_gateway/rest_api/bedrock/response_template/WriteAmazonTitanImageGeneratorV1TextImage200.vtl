@@ -6,33 +6,48 @@
     #set($s3Objects = $output.objects)
     #foreach($s3Object in $s3Objects)
     {
+        #set($content = {})
+        #if($s3Object.get("AcceptRanges"))
+            #set($void = $content.put("acceptRanges", $s3Object.get("AcceptRanges")))
+        #end
+        #if($s3Object.get("Bucket"))
+            #set($void = $content.put("bucket", $s3Object.get("Bucket")))
+        #end
+        #if($s3Object.get("ContentDisposition"))
+            #set($void = $content.put("contentDisposition", $s3Object.get("ContentDisposition")))
+        #end
+        #if($s3Object.get("ContentLanguage"))
+            #set($void = $content.put("contentLanguage", $s3Object.get("ContentLanguage")))
+        #end
+        #if($s3Object.get("ContentLength"))
+            #set($void = $content.put("contentLength", $s3Object.get("ContentLength")))
+        #end
+        #if($s3Object.get("ContentType"))
+            #set($void = $content.put("contentType", $s3Object.get("ContentType")))
+        #end
+        #if($s3Object.get("ETag"))
+            #set($void = $content.put("eTag", $s3Object.get("ETag")))
+        #end
+        #if($s3Object.get("ExpectedBucketOwner"))
+            #set($void = $content.put("expectedBucketOwner", $s3Object.get("ExpectedBucketOwner")))
+        #end
+        #if($s3Object.get("Key"))
+            #set($void = $content.put("key", $s3Object.get("Key")))
+        #end
+        #if($s3Object.get("LastModified"))
+            #set($void = $content.put("lastModified", $s3Object.get("LastModified")))
+        #end
+        #if($s3Object.get("ServerSideEncryption"))
+            #set($void = $content.put("serverSideEncryption", $s3Object.get("ServerSideEncryption")))
+        #end
+        #if($s3Object.get("Bucket") && $s3Object.get("Key"))
+            #set($s3ObjectUrl = "https://" + $s3Object.get("Bucket") + ".s3.amazonaws.com/" + $s3Object.get("Key"))
+            #set($void = $content.put("url", $s3ObjectUrl))
+        #end
 
-        #set($s3ObjectAcceptRanges = $s3Object.get("AcceptRanges"))
-        #set($s3ObjectBucket = $s3Object.get("Bucket"))
-        #set($s3ObjectContentDisposition = $s3Object.get("ContentDisposition"))
-        #set($s3ObjectContentLanguage = $s3Object.get("ContentLanguage"))
-        #set($s3ObjectContentLength = $s3Object.get("ContentLength"))
-        #set($s3ObjectContentType = $s3Object.get("ContentType"))
-        #set($s3ObjectETag = $s3Object.get("ETag"))
-        #set($s3ObjectExpectedBucketOwner = $s3Object.get("ExpectedBucketOwner"))
-        #set($s3ObjectKey = $s3Object.get("Key"))
-        #set($s3ObjectLastModified = $s3Object.get("LastModified"))
-        #set($s3ObjectServerSideEncryption = $s3Object.get("ServerSideEncryption"))
-        #set($s3ObjectUrl = "https://" + $s3ObjectBucket + ".s3.amazonaws.com/" + $s3ObjectKey)
-
-        "acceptRanges": "$s3ObjectAcceptRanges",
-        "bucket": "$s3ObjectBucket",
-        "contentDisposition": "$s3ObjectContentDisposition",
-        "contentLanguage": "$s3ObjectContentLanguage",
-        "contentLength": "$s3ObjectContentLength",
-        "contentType": "$s3ObjectContentType",
-        "eTag": "$s3ObjectETag",
-        "expectedBucketOwner": "$s3ObjectExpectedBucketOwner",
-        "key": "$s3ObjectKey",
-        "lastModified": "$s3ObjectLastModified",
-        "serverSideEncryption": "$s3ObjectServerSideEncryption",
-        "url": "$s3ObjectUrl"
-
+        #foreach($entry in $content.entrySet())
+            "$entry.key": "$entry.value"#if($foreach.hasNext),#end
+        #end
     }#if($foreach.hasNext),#end
     #end
 #end
