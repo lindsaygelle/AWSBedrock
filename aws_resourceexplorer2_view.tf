@@ -53,6 +53,14 @@ resource "aws_resourceexplorer2_view" "lambda_function" {
   name = "lambda-function"
 }
 
+resource "aws_resourceexplorer2_view" "lambda_layer" {
+  depends_on = [aws_resourceexplorer2_index.main]
+  filters {
+    filter_string = "region:${data.aws_region.main.name} resourcetype:lambda:layer"
+  }
+  name = "lambda-layer"
+}
+
 resource "aws_resourceexplorer2_view" "s3_bucket" {
   depends_on = [aws_resourceexplorer2_index.main]
   filters {
